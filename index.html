@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jornada do Servo V2.1 — Ministério Palavra de Vida</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --purple:#534AB7;--purple-light:#EEEDFE;--purple-dark:#3C3489;
+  --teal:#0F6E56;--teal-light:#E1F5EE;
+  --amber:#854F0B;--amber-light:#FAEEDA;
+  --coral:#993C1D;--coral-light:#FAECE7;
+  --blue:#185FA5;--blue-light:#E6F1FB;
+  --green:#3B6D11;--green-light:#EAF3DE;
+  --gray:#444441;--gray-light:#F1EFE8;
+  --bg:#f8f7f5;--white:#fff;
+  --text:#1a1a18;--text2:#5f5e5a;--text3:#9c9a92;
+  --border:rgba(0,0,0,0.1);
+  --radius:12px;--radius-sm:8px;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.container{max-width:680px;margin:0 auto;padding:0 1rem 4rem}
+
+/* HEADER */
+.site-header{background:var(--white);border-bottom:0.5px solid var(--border);padding:1rem;text-align:center;position:sticky;top:0;z-index:10}
+.site-header h1{font-size:18px;font-weight:600;color:var(--purple)}
+.site-header p{font-size:12px;color:var(--text3);margin-top:2px}
+
+/* HOME */
+.hero{text-align:center;padding:2rem 1rem 1.5rem}
+.hero-badge{display:inline-block;background:var(--purple-light);color:var(--purple-dark);font-size:12px;padding:4px 14px;border-radius:99px;margin-bottom:12px;font-weight:500}
+.hero h2{font-size:24px;font-weight:600;color:var(--text);margin-bottom:6px}
+.hero p{font-size:15px;color:var(--text2);line-height:1.6}
+.progress-wrap{background:#e8e7e3;border-radius:99px;height:8px;margin:1.5rem 1rem 0.5rem}
+.progress-fill{background:var(--purple);border-radius:99px;height:8px;transition:width .5s}
+.progress-label{text-align:center;font-size:13px;color:var(--text3);margin-bottom:1.5rem}
+
+/* LEVEL TABS */
+.level-tabs{display:flex;gap:6px;overflow-x:auto;padding:0 1rem 1rem;scrollbar-width:none}
+.level-tabs::-webkit-scrollbar{display:none}
+.level-tab{flex-shrink:0;padding:6px 14px;border-radius:99px;font-size:13px;font-weight:500;cursor:pointer;border:0.5px solid var(--border);background:var(--white);color:var(--text2);transition:all .2s}
+.level-tab.active{background:var(--purple);color:#fff;border-color:var(--purple)}
+.level-tab.done{background:var(--teal-light);color:var(--teal);border-color:#9FE1CB}
+
+/* MODULE CARDS */
+.modules{display:flex;flex-direction:column;gap:10px;padding:0 1rem}
+.mod-card{background:var(--white);border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.mod-header{display:flex;align-items:center;gap:12px;padding:.875rem 1.125rem;cursor:pointer}
+.mod-icon{width:38px;height:38px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.mod-info{flex:1}
+.mod-title{font-size:15px;font-weight:600;color:var(--text)}
+.mod-sub{font-size:12px;color:var(--text3);margin-top:2px}
+.mod-chevron{font-size:13px;color:var(--text3);transition:transform .2s}
+.mod-chevron.open{transform:rotate(180deg)}
+.mod-lessons{border-top:0.5px solid var(--border);display:none}
+.mod-lessons.open{display:block}
+.lesson-row{display:flex;align-items:center;gap:10px;padding:.7rem 1.125rem;border-bottom:0.5px solid var(--border);cursor:pointer;transition:background .15s}
+.lesson-row:last-child{border-bottom:none}
+.lesson-row:hover{background:var(--bg)}
+.l-dot{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+.dot-done{background:var(--teal-light);color:var(--teal)}
+.dot-active{background:var(--purple-light);color:var(--purple)}
+.dot-locked{background:var(--gray-light);color:var(--text3)}
+.l-name{flex:1;font-size:14px;color:var(--text)}
+.lesson-row.locked .l-name{color:var(--text3)}
+.l-badge{font-size:11px;padding:2px 8px;border-radius:99px}
+.badge-aula{background:var(--blue-light);color:var(--blue)}
+.badge-quiz{background:var(--amber-light);color:var(--amber)}
+
+/* SCREENS */
+.screen{display:none;padding:0 1rem}
+.screen.active{display:block}
+.back-btn{display:inline-flex;align-items:center;gap:5px;font-size:14px;color:var(--text2);cursor:pointer;background:none;border:none;padding:.75rem 0;margin-bottom:.5rem}
+.back-btn:hover{color:var(--text)}
+
+/* LESSON */
+.lesson-title{font-size:20px;font-weight:600;color:var(--text);margin-bottom:4px}
+.lesson-meta{font-size:13px;color:var(--text3);margin-bottom:1.25rem;display:flex;gap:10px;flex-wrap:wrap}
+.lesson-meta span{background:var(--bg);padding:2px 8px;border-radius:99px;border:0.5px solid var(--border)}
+.lesson-body{font-size:15px;line-height:1.8;color:var(--text)}
+.lesson-body h3{font-size:15px;font-weight:600;color:var(--purple);margin:1.5rem 0 .5rem;padding-top:1rem;border-top:0.5px solid var(--border)}
+.lesson-body h3:first-child{border-top:none;margin-top:0;padding-top:0}
+.lesson-body p{margin-bottom:.875rem}
+.lesson-body blockquote{border-left:3px solid var(--purple);padding:.5rem 1rem;margin:1rem 0;background:var(--purple-light);border-radius:0 var(--radius-sm) var(--radius-sm) 0;color:var(--purple-dark);font-style:italic;font-size:14px;line-height:1.6}
+.lesson-body ul{padding-left:1.25rem;margin:.5rem 0 .875rem}
+.lesson-body li{margin-bottom:.35rem;font-size:14px;color:var(--text2)}
+.lesson-body strong{color:var(--text);font-weight:600}
+.verse-mem{background:var(--purple-light);border:0.5px solid #AFA9EC;border-radius:var(--radius);padding:1rem;margin:1.5rem 0;text-align:center;font-size:14px;color:var(--purple-dark);line-height:1.6}
+.verse-mem strong{display:block;font-size:12px;color:var(--text3);margin-bottom:4px;font-weight:500}
+.reflections{background:var(--amber-light);border-radius:var(--radius);padding:1rem 1.25rem;margin:1.5rem 0}
+.reflections h4{font-size:13px;font-weight:600;color:var(--amber);margin-bottom:.5rem}
+.reflections li{font-size:14px;color:#633806;margin-bottom:.35rem}
+
+/* QUIZ */
+.quiz-title{font-size:20px;font-weight:600;color:var(--text);margin-bottom:4px}
+.quiz-meta{font-size:13px;color:var(--text3);margin-bottom:1.5rem}
+.q-block{margin-bottom:1.5rem}
+.q-text{font-size:15px;font-weight:500;color:var(--text);margin-bottom:.75rem;line-height:1.5}
+.q-opt{display:flex;align-items:flex-start;gap:10px;padding:.75rem 1rem;border:0.5px solid var(--border);border-radius:var(--radius-sm);margin-bottom:8px;cursor:pointer;font-size:14px;color:var(--text);background:var(--white);transition:all .15s;line-height:1.5}
+.q-opt:hover{border-color:#AFA9EC;background:var(--purple-light)}
+.q-opt.selected{border-color:var(--purple);background:var(--purple-light);color:var(--purple-dark)}
+.q-opt.correct{border-color:var(--teal);background:var(--teal-light);color:#085041}
+.q-opt.wrong{border-color:var(--coral);background:var(--coral-light);color:#4A1B0C}
+.q-opt input{margin-top:3px;accent-color:var(--purple);flex-shrink:0}
+.result-box{background:var(--bg);border-radius:var(--radius);padding:1.5rem;text-align:center;margin:1.5rem 0;border:0.5px solid var(--border)}
+.result-score{font-size:48px;font-weight:700;color:var(--purple)}
+.result-msg{font-size:15px;color:var(--text2);margin-top:6px;line-height:1.5}
+
+/* BUTTONS */
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:1.5rem;padding-bottom:2rem}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:var(--radius-sm);font-size:14px;font-weight:500;cursor:pointer;border:none;transition:opacity .15s}
+.btn:hover{opacity:.85}
+.btn-primary{background:var(--purple);color:#fff}
+.btn-outline{background:var(--white);color:var(--text);border:0.5px solid var(--border)}
+
+
+/* AUDIO CONTROLS */
+.audio-box{
+  background:var(--white);
+  border:0.5px solid var(--border);
+  border-radius:var(--radius);
+  padding:14px;
+  margin:0 0 1.25rem;
+}
+.audio-help{
+  font-size:13px;
+  color:var(--text2);
+  line-height:1.5;
+  margin-bottom:8px;
+}
+.audio-status{
+  font-size:12px;
+  color:var(--purple-dark);
+  background:var(--purple-light);
+  border-radius:99px;
+  display:inline-block;
+  padding:4px 10px;
+  margin-bottom:10px;
+}
+.audio-controls{
+  margin-top:0;
+  padding-bottom:0;
+}
+.audio-controls .btn{
+  flex:1;
+  justify-content:center;
+}
+@media(max-width:520px){
+  .audio-controls .btn{
+    flex-basis:100%;
+  }
+}
+
+/* CERT */
+.cert-wrap{text-align:center;padding:2rem 1rem}
+.cert-box{border:2px solid var(--purple);border-radius:var(--radius);padding:2rem;max-width:480px;margin:1rem auto;background:var(--white)}
+.cert-seal{width:60px;height:60px;border-radius:50%;background:var(--purple-light);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 1rem}
+.cert-label{font-size:11px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+.cert-name{font-size:22px;font-weight:600;color:var(--text);margin:6px 0}
+.cert-course{font-size:15px;color:var(--purple);margin-bottom:1rem;font-weight:500}
+.cert-body{font-size:14px;color:var(--text2);line-height:1.7}
+.cert-date{font-size:12px;color:var(--text3);margin-top:1rem}
+
+/* COLORS per level */
+.lv1 .mod-icon{background:var(--purple-light);color:var(--purple)}
+.lv2 .mod-icon{background:var(--teal-light);color:var(--teal)}
+.lv3 .mod-icon{background:var(--amber-light);color:var(--amber)}
+.lv4 .mod-icon{background:var(--coral-light);color:var(--coral)}
+.lv5 .mod-icon{background:var(--blue-light);color:var(--blue)}
+
+/* V2 EXPERIENCE */
+.hero-v2{
+  background:linear-gradient(180deg,#fff 0%,#f8f7f5 100%);
+  border:0.5px solid var(--border);
+  border-radius:20px;
+  margin:1rem 1rem 1.25rem;
+  padding:2rem 1.2rem;
+}
+.hero-v2 h2{font-size:30px;color:var(--purple-dark);letter-spacing:-.02em}
+.hero-lead{max-width:560px;margin:.25rem auto 0;font-size:16px;color:var(--text);line-height:1.65}
+.hero-note{max-width:560px;margin:.75rem auto 0;font-size:14px;color:var(--text2);line-height:1.6}
+.home-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:1.25rem}
+.journey-panel{
+  background:var(--white);
+  border:0.5px solid var(--border);
+  border-radius:18px;
+  margin:0 1rem 1.25rem;
+  padding:1rem;
+  box-shadow:0 10px 25px rgba(40,34,90,.06);
+}
+.jp-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.jp-label{font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em}
+.journey-panel h3{font-size:18px;color:var(--text);margin-top:3px}
+.jp-pct{width:54px;height:54px;border-radius:50%;background:var(--purple-light);color:var(--purple-dark);display:flex;align-items:center;justify-content:center;font-weight:700}
+.next-step{font-size:13px;color:var(--text2);background:var(--bg);border:0.5px solid var(--border);border-radius:12px;padding:.8rem;margin:.8rem 0}
+.btn-full{width:100%;justify-content:center}
+.levels-overview{display:grid;gap:10px;padding:0 1rem 1.25rem}
+.level-overview-card{
+  background:var(--white);
+  border:0.5px solid var(--border);
+  border-radius:16px;
+  padding:1rem;
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+  cursor:pointer;
+  transition:transform .15s, border-color .15s, box-shadow .15s;
+}
+.level-overview-card:hover{transform:translateY(-1px);border-color:#AFA9EC;box-shadow:0 10px 25px rgba(40,34,90,.06)}
+.level-overview-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+.level-overview-card h3{font-size:15px;margin-bottom:3px;color:var(--text)}
+.level-overview-card .tagline{font-size:13px;font-weight:600;color:var(--purple-dark);margin-bottom:4px}
+.level-overview-card p{font-size:13px;color:var(--text2);line-height:1.45}
+.lesson-card{
+  background:var(--white);
+  border:0.5px solid var(--border);
+  border-radius:16px;
+  padding:1rem;
+  margin:1rem 0;
+}
+.lesson-card h3{
+  border-top:none!important;
+  margin:0 0 .65rem!important;
+  padding-top:0!important;
+  color:var(--purple-dark)!important;
+  font-size:16px!important;
+}
+.lesson-card p:last-child{margin-bottom:0}
+.key-card{background:var(--blue-light);border-color:#BBD8F2}
+.heart-card{background:var(--purple-light);border-color:#AFA9EC}
+.prayer-card{background:var(--teal-light);border-color:#9FE1CB}
+.challenge-card{background:var(--amber-light);border-color:#E6C98B}
+.growth-card{background:var(--gray-light)}
+.action-card{background:#fff;border:0.5px solid var(--border);border-radius:16px;padding:1rem;margin:1rem 0}
+.action-card h4{font-size:14px;color:var(--text);margin-bottom:.4rem}
+.action-card p{font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:.75rem}
+.btn-whatsapp{background:#0F6E56;color:#fff}
+.btn-ai{background:#185FA5;color:#fff}
+.pastoral-toast{
+  position:fixed;
+  left:50%;
+  bottom:18px;
+  transform:translateX(-50%) translateY(20px);
+  max-width:92vw;
+  width:520px;
+  background:#1a1a18;
+  color:#fff;
+  padding:14px 16px;
+  border-radius:14px;
+  font-size:14px;
+  line-height:1.45;
+  box-shadow:0 18px 40px rgba(0,0,0,.25);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .25s, transform .25s;
+  z-index:99;
+}
+.pastoral-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.student-card{
+  margin-top:.9rem;
+  background:rgba(255,255,255,.85);
+  border:0.5px solid var(--border);
+  border-radius:14px;
+  padding:.85rem;
+  text-align:left;
+}
+.student-card strong{color:var(--purple-dark)}
+.student-card p{font-size:13px;color:var(--text2);line-height:1.45;margin:.25rem 0 .65rem}
+.student-actions{display:flex;gap:8px;flex-wrap:wrap}
+.student-actions .btn{padding:8px 12px;font-size:13px}
+.achievements-box{
+  background:var(--white);
+  border:0.5px solid var(--border);
+  border-radius:18px;
+  margin:0 1rem 1.25rem;
+  padding:1rem;
+}
+.achievements-box h3{font-size:16px;margin-bottom:.35rem;color:var(--text)}
+.achievements-box p{font-size:13px;color:var(--text2);line-height:1.45;margin-bottom:.75rem}
+.achievement-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.achievement-pill{
+  border:0.5px solid var(--border);
+  border-radius:14px;
+  padding:.75rem;
+  background:var(--bg);
+  color:var(--text3);
+  font-size:12px;
+  line-height:1.35;
+}
+.achievement-pill strong{display:block;color:var(--text2);font-size:13px;margin-bottom:2px}
+.achievement-pill.unlocked{background:var(--teal-light);border-color:#9FE1CB;color:#0F6E56}
+.achievement-pill.unlocked strong{color:#085041}
+.cert-student{font-size:24px;font-weight:700;color:var(--purple-dark);margin:.35rem 0 .75rem}
+.cert-verse{font-size:13px;color:var(--purple-dark);background:var(--purple-light);border-radius:12px;padding:.75rem;margin:1rem 0;line-height:1.55}
+.q-feedback{display:none;margin:.35rem 0 .9rem;padding:.65rem .75rem;border-radius:10px;font-size:13px;line-height:1.45;background:var(--bg);color:var(--text2);border:0.5px solid var(--border)}
+.q-feedback.show{display:block}
+@media(max-width:520px){.achievement-grid{grid-template-columns:1fr}}
+
+@media(max-width:520px){
+  .hero-v2{margin:.75rem .5rem 1rem;padding:1.5rem 1rem}
+  .hero-v2 h2{font-size:26px}
+  .journey-panel{margin:0 .5rem 1rem}
+  .levels-overview{padding:0 .5rem 1rem}
+  .home-actions .btn{width:100%;justify-content:center}
+}
+
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <h1>✝ Jornada do Servo</h1>
+  <p>Ministério Evangélico Palavra de Vida</p>
+</header>
+
+<div class="container">
+
+<!-- HOME SCREEN -->
+<div id="home-screen" class="screen active">
+  <section class="hero hero-v2">
+    <div class="hero-badge" id="hero-badge">Bem-vindo</div>
+    <h2>Jornada do Servo</h2>
+    <p class="hero-lead">Uma caminhada de crescimento espiritual para quem deseja conhecer mais a Cristo, amadurecer na fé e servir no Reino de Deus.</p>
+    <p class="hero-note">Faça cada aula com calma. Ore antes de começar, ouça se precisar, reflita e pratique aquilo que aprender.</p>
+    <div class="home-actions">
+      <button class="btn btn-primary" onclick="startJourney()">Começar minha jornada</button>
+      <button class="btn btn-outline" onclick="continueJourney()">Continuar de onde parei</button>
+    </div>
+    <div class="student-card" id="student-card"></div>
+  </section>
+
+  <section class="journey-panel">
+    <div class="jp-top">
+      <div>
+        <div class="jp-label">Minha Jornada</div>
+        <h3 id="journey-title">Continue firme</h3>
+      </div>
+      <div class="jp-pct" id="journey-pct">0%</div>
+    </div>
+    <div class="progress-wrap"><div class="progress-fill" id="main-progress" style="width:0%"></div></div>
+    <div class="progress-label" id="progress-label">0 etapas concluídas</div>
+    <div class="next-step" id="next-step-box">Próximo passo: Aula 1</div>
+    <button class="btn btn-outline btn-full" onclick="continueJourney()">Ver próximo passo</button><button class="btn btn-outline btn-full" style="margin-top:8px" onclick="resetProgressConfirm()">Reiniciar progresso neste aparelho</button>
+  </section>
+
+  <section class="achievements-box" id="achievements-box"></section>
+
+  <section class="levels-overview" id="levels-overview"></section>
+
+  <div class="level-tabs" id="level-tabs"></div>
+  <div class="modules" id="modules-list"></div>
+</div>
+
+<!-- LESSON SCREEN -->
+<div id="lesson-screen" class="screen">
+  <button class="back-btn" onclick="goHome()">← Voltar</button>
+  <h2 class="lesson-title" id="ls-title"></h2>
+  <div class="lesson-meta" id="ls-meta"></div>
+
+  <div class="audio-box" aria-label="Controles de áudio da aula">
+    <div class="audio-help">Tem dificuldade para ler? Clique em “Ouvir aula” e acompanhe esta lição em voz alta.</div>
+    <div class="audio-status" id="audio-status">Status: leitura pronta.</div>
+    <div class="btn-row audio-controls">
+      <button class="btn btn-primary" id="btn-speak" onclick="speakLesson()">🎧 Ouvir aula</button>
+      <button class="btn btn-outline" onclick="pauseSpeech()">⏸ Pausar leitura</button>
+      <button class="btn btn-outline" onclick="resumeSpeech()">▶ Continuar leitura</button>
+      <button class="btn btn-outline" onclick="stopSpeech()">⏹ Parar leitura</button>
+    </div>
+  </div>
+
+  <div class="lesson-body" id="ls-content"></div>
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="completeLesson()">✓ Concluir aula</button>
+    <button class="btn btn-outline" onclick="goHome()">Voltar ao início</button>
+  </div>
+</div>
+
+<!-- QUIZ SCREEN -->
+<div id="quiz-screen" class="screen">
+  <button class="back-btn" onclick="goHome()">← Voltar</button>
+  <h2 class="quiz-title" id="qs-title"></h2>
+  <div class="quiz-meta" id="qs-meta"></div>
+  <div id="qs-questions"></div>
+  <div id="qs-result" style="display:none"></div>
+  <div class="btn-row" id="qs-buttons">
+    <button class="btn btn-primary" onclick="submitQuiz()">Enviar respostas</button>
+  </div>
+</div>
+
+<!-- CERT SCREEN -->
+<div id="cert-screen" class="screen">
+  <div class="cert-wrap">
+    <h2 style="font-size:22px;font-weight:600;margin-bottom:.5rem">🎉 Parabéns!</h2>
+    <p style="color:var(--text2);font-size:15px;margin-bottom:1.5rem">Você concluiu um nível da Jornada do Servo.</p>
+    <div class="cert-box">
+      <div class="cert-seal">🏆</div>
+      <div class="cert-label">Certificado de Conclusão</div>
+      <div class="cert-student" id="cert-student-name"></div>
+      <div class="cert-name" id="cert-level-name">Jornada do Servo</div>
+      <div class="cert-course" id="cert-level-sub"></div>
+      <div class="cert-body" id="cert-body"></div>
+      <div class="cert-date" id="cert-date"></div>
+    </div>
+    <div class="btn-row" style="justify-content:center;margin-top:1.5rem">
+      <button class="btn btn-outline" onclick="goHome()">← Início</button>
+      <button class="btn btn-primary" onclick="printCert()">🖨 Imprimir / Salvar</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- /container -->
+<div id="pastoral-toast" class="pastoral-toast" aria-live="polite"></div>
+
+<script>
+const LEVELS = [
+  { id:1, name:"Conectar", sub:"Novo convertido", color:"lv1", icon:"✝",
+    desc:"Você firmou os fundamentos da fé cristã e está integrado à vida da igreja.",
+    modules:[
+      { title:"Salvação e Nova Vida", sub:"Os fundamentos da fé", lessons:[
+        { id:"1-1", type:"aula", title:"Salvação, Arrependimento, Fé e Nova Vida",
+          sections:[
+            {h:"O que é a salvação", body:`A palavra salvação na Bíblia significa livramento, resgate e restauração. Ela descreve o ato pelo qual Deus tira o ser humano da condição de perdido, condenado e separado e o traz para uma condição de perdoado, reconciliado e filho.\n\n<strong>A salvação não começa no ser humano — começa em Deus.</strong>`,
+              verses:["Porque pela graça sois salvos, mediante a fé; e isto não vem de vós, é dom de Deus. — Ef 2:8","O salário do pecado é a morte, mas o dom gratuito de Deus é a vida eterna em Cristo Jesus. — Rm 6:23"]},
+            {h:"Arrependimento e Fé", body:`Salvação não acontece automaticamente. Ela acontece quando a pessoa responde ao chamado de Deus por meio de arrependimento e fé.\n\n<strong>Arrependimento</strong> não é apenas sentir culpa — é mudar de direção. A palavra bíblica significa: mudar a mente, mudar o caminho.\n\n<strong>Fé</strong> não é só acreditar que Deus existe. Fé é confiar a vida inteira a Jesus. Arrependimento tira você do caminho errado. Fé coloca você no caminho certo.`,
+              verses:["Arrependei-vos, porque é chegado o Reino dos Céus. — Mt 4:17","Crê no Senhor Jesus Cristo e serás salvo. — At 16:31"]},
+            {h:"Nova Vida em Cristo", body:`Quando alguém se arrepende e crê em Jesus, algo sobrenatural acontece. A pessoa não apenas muda de comportamento — ela muda de natureza espiritual.\n\nNova identidade: agora você é filho de Deus. Novo propósito: você não vive mais para si mesmo, mas para Cristo. Novo processo: você entra em um caminho de transformação chamado santificação.\n\nVocê ainda vai errar, mas agora você não vive mais no pecado — você luta contra ele.`,
+              verses:["Portanto, se alguém está em Cristo, é nova criação. As coisas antigas já passaram; eis que surgiram coisas novas! — 2 Co 5:17"]}],
+          reflections:["O que significa ser salvo para você hoje?","Existe algo que Deus está te chamando a abandonar?","O que já mudou ou precisa mudar em sua vida após aceitar Cristo?"],
+          memVerse:"Se confessarmos os nossos pecados, ele é fiel e justo para perdoar os nossos pecados e nos purificar de toda injustiça. — 1 Jo 1:9"},
+        { id:"1-2", type:"aula", title:"Certeza da Salvação e Identidade em Cristo",
+          sections:[
+            {h:"Certeza da Salvação", body:`Muitos cristãos vivem inseguros espiritualmente. Um dia acham que estão salvos, no outro acham que perderam a salvação. Isso acontece porque baseiam sua fé em sentimentos, não na Palavra.\n\n<strong>A certeza da salvação é a convicção profunda de que pertencemos a Cristo, porque cremos em Sua obra.</strong>\n\nA Bíblia não diz "para que vocês sintam", mas "para que vocês <em>saibam</em>". Nossa salvação não depende do nosso humor, da nossa performance ou dos nossos altos e baixos. <strong>Ela depende do que Jesus fez.</strong>`,
+              verses:["Escrevi-lhes estas coisas... para que vocês saibam que têm a vida eterna. — 1 Jo 5:13","Portanto, agora já não há condenação para os que estão em Cristo Jesus. — Rm 8:1"]},
+            {h:"Identidade em Cristo — Filhos de Deus", body:`Antes da salvação, éramos apenas criaturas de Deus. Depois da salvação, nos tornamos filhos.\n\nIsso muda tudo. Você não é um pecador tentando agradar a Deus — você é um filho que foi aceito pelo Pai.\n\nIdentidade vem antes do comportamento. <strong>Não obedecemos para nos tornar filhos — obedecemos porque já somos filhos.</strong>`,
+              verses:["Aos que o receberam... deu-lhes o direito de se tornarem filhos de Deus. — Jo 1:12","Vocês receberam o Espírito que os adota como filhos, por meio do qual clamamos: Aba, Pai. — Rm 8:15"]},
+            {h:"Graça e Perdão", body:`Graça é o amor de Deus por pessoas que não merecem. O pecado nunca é maior que a graça. O erro nunca vence o perdão.\n\nNa cruz, Jesus pagou toda a nossa dívida. Quando confessamos, Deus não nos rejeita — Ele nos restaura.\n\n<strong>O inimigo tenta nos acusar. Deus nos chama de filhos.</strong>`,
+              verses:["Se confessarmos os nossos pecados, ele é fiel e justo para perdoar. — 1 Jo 1:9"]}],
+          reflections:["Em que você baseia sua certeza da salvação?","Em quais áreas você ainda se sente condenado?","O que muda quando você entende que é filho de Deus?"],
+          memVerse:"O próprio Espírito testemunha ao nosso espírito que somos filhos de Deus. — Rm 8:16"},
+        { id:"1-q1", type:"quiz", title:"Teste — Salvação e Nova Vida", questions:[
+          {q:"Segundo Efésios 2:8, a salvação é:", opts:["Uma conquista por boas obras","Um dom de Deus pela graça, mediante a fé","O resultado do batismo","Uma escolha exclusivamente humana"], ans:1},
+          {q:"O que é arrependimento no contexto bíblico?", opts:["Apenas sentir culpa pelos erros","Fazer penitências e orações repetidas","Uma mudança de direção — virar-se para Deus","Esquecer completamente o passado"], ans:2},
+          {q:"A certeza da salvação, segundo 1 João 5:13, está baseada em:", opts:["Nossos sentimentos e experiências","Nossa frequência na igreja","Nossa performance espiritual","Crer no nome do Filho de Deus e na Sua obra"], ans:3},
+          {q:"O que muda na pessoa que recebe a salvação em Cristo?", opts:["Apenas seu comportamento externo","Sua identidade, propósito e natureza espiritual","Somente sua situação financeira","Nada muda imediatamente"], ans:1},
+        ]}
+      ]},
+      { title:"Vida Devocional", sub:"Oração, Palavra e Espírito", lessons:[
+        { id:"1-3", type:"aula", title:"Batismo nas Águas",
+          sections:[
+            {h:"O significado do batismo", body:`O batismo nas águas é um dos atos mais importantes da vida cristã. Ele não é apenas uma tradição da igreja — é uma declaração espiritual poderosa.\n\nA Bíblia ensina que o batismo representa nossa identificação com Jesus. Quando uma pessoa desce às águas, ela declara: "Eu morri para minha velha vida." Quando ela emerge, diz: "Agora vivo uma nova vida em Cristo."\n\nO batismo simboliza três realidades: morte para o pecado, sepultamento da velha natureza e ressurreição para nova vida. <strong>O batismo não salva, mas confirma publicamente que alguém foi salvo.</strong>`,
+              verses:["Fomos sepultados com ele na morte por meio do batismo, a fim de que... também nós vivamos uma vida nova. — Rm 6:4"]},
+            {h:"Batismo como ato de obediência", body:`O batismo não é opcional para quem ama Jesus. Ele é um mandamento direto do próprio Cristo. O batismo é uma resposta de amor e obediência. <strong>O batismo marca o início da vida cristã pública.</strong>`,
+              verses:["Vão e façam discípulos... batizando-os em nome do Pai e do Filho e do Espírito Santo. — Mt 28:19","Arrependam-se, e cada um de vocês seja batizado em nome de Jesus Cristo. — At 2:38"]}],
+          reflections:["O que o batismo representa para você?","Existe algo que está te impedindo de obedecer a Jesus?","Sua vida reflete sua decisão pública por Cristo?"],
+          memVerse:"Fomos sepultados com ele na morte por meio do batismo, a fim de que... também nós vivamos uma vida nova. — Rm 6:4"},
+        { id:"1-4", type:"aula", title:"Vida Devocional: Oração, Palavra e Jejum",
+          sections:[
+            {h:"Oração", body:`A oração é muito mais do que pedir coisas a Deus. Ela é um relacionamento vivo. Orar significa falar com Deus, ouvir Deus, caminhar com Deus.\n\nJesus ensinou que a oração verdadeira acontece no lugar secreto. A oração nos permite receber direção, encontrar força, vencer tentações e manter intimidade com Deus.\n\n<strong>Uma fé sem oração se torna fraca. Uma vida com oração se torna forte.</strong>`,
+              verses:["Orem continuamente. — 1 Ts 5:17","Vá para seu quarto, feche a porta e ore a seu Pai, que está no secreto. — Mt 6:6"]},
+            {h:"Leitura da Palavra", body:`Assim como o corpo precisa de alimento, a alma precisa da Palavra de Deus. A Bíblia não é um livro comum. Ela é a Palavra de Deus — viva, eficaz e penetrante como espada. Ela nos ensina, nos corrige, nos fortalece e nos direciona.\n\n<strong>Cristão sem Bíblia fica espiritualmente fraco.</strong>`,
+              verses:["A tua palavra é lâmpada que ilumina os meus passos e luz que clareia o meu caminho. — Sl 119:105","Não deixe de falar as palavras deste Livro da Lei e de meditar nelas de dia e de noite. — Js 1:8"]},
+            {h:"Jejum", body:`O jejum é uma prática espiritual poderosa. Jesus não disse "se jejuardes", mas "quando" — porque o jejum faz parte da vida cristã. Jejuar é abrir mão de algo natural para buscar algo espiritual.\n\nO jejum submete a carne, aguça a sensibilidade espiritual, fortalece a oração e traz direção de Deus. <strong>Jejum não compra milagres, mas alinha o coração.</strong>`,
+              verses:["Quando vocês jejuarem... — Mt 6:16"]}],
+          reflections:["Como está sua vida devocional hoje?","O que precisa mudar em sua rotina espiritual?","Qual passo prático você vai dar nesta semana?"],
+          memVerse:"Busquem o Senhor enquanto se pode achá-lo; clamem por ele enquanto está perto. — Is 55:6"},
+        { id:"1-q2", type:"quiz", title:"Teste — Vida Devocional", questions:[
+          {q:"Segundo Mateus 6:6, onde Jesus ensina que a oração verdadeira acontece?", opts:["No culto da igreja, em público","No lugar secreto, em particular com Deus","Em grupos de oração coletivos","Em voz alta, para que outros ouçam"], ans:1},
+          {q:"O que a Palavra de Deus faz na vida do crente, segundo Josué 1:8?", opts:["Garante prosperidade financeira automática","Substitui a necessidade de orar","Traz prosperidade e êxito ao que medita nela de dia e de noite","É apenas um texto histórico antigo"], ans:2},
+          {q:"O jejum, segundo a aula, tem como objetivo principal:", opts:["Impressionar outras pessoas com espiritualidade","Comprar milagres de Deus","Emagrecer e disciplinar o corpo fisicamente","Submeter a carne e alinhar o coração a Deus"], ans:3},
+        ]}
+      ]},
+      { title:"Espírito Santo e Igreja", sub:"Presença e comunidade", lessons:[
+        { id:"1-5", type:"aula", title:"O Espírito Santo",
+          sections:[
+            {h:"Quem é o Espírito Santo", body:`Muitas pessoas pensam que o Espírito Santo é apenas uma força, uma energia ou uma influência espiritual. Mas a Bíblia ensina que o Espírito Santo é uma Pessoa divina, parte da Trindade: Pai, Filho e Espírito Santo.\n\n<strong>Ele não é algo — Ele é alguém.</strong> Ele fala, ensina, consola, guia e age.`,
+              verses:["Mas o Conselheiro, o Espírito Santo, que o Pai enviará em meu nome, lhes ensinará todas as coisas. — Jo 14:26"]},
+            {h:"A atuação do Espírito Santo na vida cristã", body:`Quando alguém se converte, o Espírito Santo passa a habitar dentro dele. Ele convence do pecado, nos guia na verdade, nos consola e fortalece, e nos conduz como filhos de Deus.\n\n<strong>Sem o Espírito Santo, a vida cristã se torna apenas religião. Com Ele, torna-se vida com Deus.</strong>`,
+              verses:["Vocês não sabem que são santuário de Deus e que o Espírito de Deus habita em vocês? — 1 Co 3:16","Todos os que são guiados pelo Espírito de Deus são filhos de Deus. — Rm 8:14"]},
+            {h:"Vivendo sensível ao Espírito", body:`Deus fala. A questão é: estamos ouvindo? Viver no Espírito significa sensibilidade à Sua voz, obediência aos Seus direcionamentos e dependência diária.\n\n<strong>Quanto mais nos rendemos ao Espírito Santo, mais a nossa vida muda.</strong>`,
+              verses:["Vivam pelo Espírito, e de modo nenhum satisfarão os desejos da carne. — Gl 5:16"]}],
+          reflections:["Você tem permitido o Espírito Santo guiar sua vida?","Em quais áreas você precisa ser mais sensível à voz dEle?"],
+          memVerse:"Por isso digo: vivam pelo Espírito, e de modo nenhum satisfarão os desejos da carne. — Gl 5:16"},
+        { id:"1-6", type:"aula", title:"A Igreja, Corpo de Cristo",
+          sections:[
+            {h:"Comunhão — somos um corpo", body:`A igreja não é um prédio, uma placa ou uma instituição. A igreja são pessoas que foram salvas por Jesus, reunidas em adoração a Ele.\n\nCada crente é um membro, cada pessoa tem uma função, ninguém é dispensável. Deus nunca planejou cristãos isolados — Ele nos colocou em uma família espiritual.\n\n<strong>Cristão sem comunhão enfraquece. Cristão conectado ao corpo cresce.</strong>`,
+              verses:["Vocês são o corpo de Cristo, e cada um de vocês, individualmente, é membro desse corpo. — 1 Co 12:27","Eles se dedicavam ao ensino dos apóstolos e à comunhão, ao partir do pão e às orações. — At 2:42"]},
+            {h:"Submissão espiritual", body:`Deus governa Sua igreja por meio de liderança espiritual. Submissão não é controle — é proteção. Ela traz crescimento, direção e segurança espiritual.\n\nAssim como uma ovelha precisa de um pastor, todo cristão precisa de pastoreio.`,
+              verses:["Obedeçam aos seus líderes e submetam-se à autoridade deles. — Hb 13:17"]}],
+          reflections:["Você está verdadeiramente integrado na igreja?","Como você vive comunhão e submissão espiritual?"],
+          memVerse:"Não deixemos de reunir-nos como igreja... mas encorajemo-nos uns aos outros. — Hb 10:25"},
+        { id:"1-7", type:"aula", title:"Visão, Valores e Doutrina da Igreja",
+          sections:[
+            {h:"Propósito da Igreja", body:`A igreja não existe por acaso. Ela existe porque Deus tem um plano para o mundo. A igreja existe para levar pessoas a Cristo, formar discípulos, transformar vidas e expandir o Reino de Deus.\n\n<strong>Nós não somos uma organização social — somos um organismo espiritual.</strong>`,
+              verses:["Portanto, vão e façam discípulos de todas as nações. — Mt 28:19"]},
+            {h:"Valores e Doutrina", body:`Doutrina é o conjunto de verdades bíblicas que define no que cremos. Valores são as práticas que demonstram essas verdades: amor, santidade, comunhão, missão e serviço.\n\n<strong>Sem doutrina, a igreja se perde. Sem valores, a igreja se enfraquece.</strong>`},
+            {h:"Alinhamento Espiritual", body:`Deus trabalha através de unidade. Alinhamento espiritual significa concordar com a visão, respeitar a liderança e caminhar na mesma direção.\n\nUnidade não significa que todos pensam igual — significa que todos caminham para o mesmo propósito.`,
+              verses:["Duas pessoas andarão juntas se não tiverem de acordo? — Am 3:3"]}],
+          reflections:["Você conhece e concorda com a visão da igreja?","Está disposto a caminhar em unidade?"],
+          memVerse:"Há um só corpo e um só Espírito, assim como a esperança para a qual vocês foram chamados é uma só. — Ef 4:4"},
+        { id:"1-8", type:"aula", title:"Chamado para uma Vida de Santidade e Serviço",
+          sections:[
+            {h:"Santidade — o chamado de Deus", body:`Santidade não significa perfeição. Significa pertencer a Deus e viver de forma separada do pecado. Deus nos salvou para nos transformar — a salvação nos tira da condenação, a santidade nos conduz a uma vida que agrada a Deus.\n\nSer santo é dizer não ao pecado, dizer sim à vontade de Deus e buscar viver em obediência. <strong>Santidade não é isolamento — é consagração.</strong>`,
+              verses:["Sejam santos, porque eu sou santo. — 1 Pe 1:16"]},
+            {h:"Todo cristão é chamado a servir", body:`Na vida cristã, ninguém foi salvo para ficar parado. Servir é demonstrar amor, exercitar maturidade e cumprir nosso propósito. Deus não nos chamou apenas para frequentar a igreja, <strong>mas para construí-la.</strong>`,
+              verses:["O Filho do homem não veio para ser servido, mas para servir. — Mc 10:45","Cada um exerça o dom que recebeu para servir aos outros. — 1 Pe 4:10"]}],
+          reflections:["Em quais áreas Deus pode usar sua vida?","Você está disposto a servir com fidelidade?"],
+          memVerse:"Cada um exerça o dom que recebeu para servir aos outros, administrando fielmente a graça de Deus. — 1 Pe 4:10"},
+        { id:"1-q3", type:"quiz", title:"Teste — Espírito Santo e Igreja", questions:[
+          {q:"Segundo a Bíblia, quem é o Espírito Santo?", opts:["Uma força ou energia espiritual impessoal","Uma manifestação física de Deus","Uma Pessoa divina, parte da Trindade","Um anjo especialmente designado por Deus"], ans:2},
+          {q:"O que a aula ensina sobre a Igreja?", opts:["É uma organização religiosa e social","São pessoas salvas por Jesus, reunidas em adoração a Ele","É apenas um prédio onde as pessoas se encontram","É opcional para quem já é salvo"], ans:1},
+          {q:"Santidade, segundo 1 Pedro 1:16, significa:", opts:["Perfeição absoluta sem errar nunca","Isolamento do mundo e das pessoas","Pertencer a Deus e viver separado do pecado","Participar de todos os cultos da semana"], ans:2},
+          {q:"Por que todo cristão é chamado a servir?", opts:["Para ganhar pontos na salvação","Porque servir é demonstrar amor e cumprir nosso propósito","Para impressionar a liderança da igreja","Apenas os que têm dons especiais devem servir"], ans:1},
+        ]}
+      ]}
+    ]
+  },
+  { id:2, name:"Servir", sub:"Voluntário", color:"lv2", icon:"🤝",
+    desc:"Você desenvolveu caráter, compromisso e maturidade para servir voluntariamente na igreja.",
+    modules:[
+      { title:"Chamado e Caráter", sub:"Fundamentos do serviço", lessons:[
+        { id:"2-1", type:"aula", title:"O Chamado para Servir",
+          sections:[
+            {h:"Jesus, o Servo", body:`Quando pensamos em Jesus, muitas vezes pensamos em poder, milagres e glória. Mas o próprio Jesus definiu Seu ministério de outra forma. Jesus, sendo Deus, escolheu o caminho da humildade.\n\nIsso nos ensina algo profundo: <strong>no Reino de Deus, grandeza é medida por serviço.</strong> Jesus lavou pés. Jesus tocou os rejeitados. Jesus se entregou por amor.\n\nServir não diminui ninguém — revela Cristo em nós.`,
+              verses:["O Filho do Homem não veio para ser servido, mas para servir. — Mc 10:45","Esvaziou-se a si mesmo, assumindo forma de servo. — Fp 2:7"]},
+            {h:"Servir com amor", body:`No Reino de Deus, a motivação importa tanto quanto a ação. Alguém pode estar fazendo algo na igreja, mas com o coração errado — para ser visto, para receber reconhecimento, para se sentir importante.\n\nMas Deus não se impressiona com atividade — Ele olha para o coração. Servir com amor significa fazer o que é necessário, não apenas o que é visível; cuidar de pessoas, não apenas de tarefas; ser fiel mesmo quando ninguém está olhando.\n\n<strong>Amor transforma serviço em adoração.</strong>`,
+              verses:["Tudo o que fizerdes, fazei-o com amor. — 1 Co 16:14"]}],
+          reflections:["Por que você deseja servir na igreja?","O que Jesus te ensina sobre servir?","Você serviria mesmo sem visibilidade?"],
+          memVerse:"Pelo amor servi-vos uns aos outros. — Gl 5:13"},
+        { id:"2-2", type:"aula", title:"Caráter Cristão no Serviço",
+          sections:[
+            {h:"Fidelidade — provados no pouco", body:`Deus não começa confiando grandes coisas a pessoas que não são fiéis nas pequenas. Muitos querem posições, mas Deus observa pontualidade, compromisso, constância e responsabilidade.\n\nFidelidade é continuar fazendo o que é certo quando ninguém vê, quando ninguém elogia, quando parece que não importa. <strong>Mas para Deus, sempre importa.</strong>`,
+              verses:["Quem é fiel no pouco, também é fiel no muito. — Lc 16:10"]},
+            {h:"Humildade — o coração do servo", body:`O maior inimigo do serviço cristão é o orgulho. O servo humilde aceita correção, não disputa posição e celebra o sucesso dos outros.\n\n<strong>Quem é grande no Reino de Deus é quem sabe se abaixar.</strong>`,
+              verses:["Humilhai-vos perante o Senhor. — Tg 4:10"]}],
+          reflections:["Você tem sido fiel nos compromissos assumidos?","Como você reage quando não é reconhecido?"],
+          memVerse:"Deus resiste aos soberbos, mas dá graça aos humildes. — Tg 4:6"},
+        { id:"2-q1", type:"quiz", title:"Teste — Chamado e Caráter", questions:[
+          {q:"Por que Jesus é nosso modelo de serviço?", opts:["Porque era obrigado a servir por ser homem","Porque escolheu a humildade mesmo sendo Deus","Porque servir era a única forma de fazer milagres","Porque não tinha outra opção disponível"], ans:1},
+          {q:"O que Deus observa antes de confiar coisas maiores, segundo Lucas 16:10?", opts:["Os talentos naturais da pessoa","A formação teológica do servidor","A fidelidade nas pequenas coisas","O tempo de conversão"], ans:2},
+          {q:"Servir com o coração errado (para ser visto) revela o quê?", opts:["Grande humildade espiritual","Um erro grave e imperdoável","Motivação distorcida — Deus olha para o coração","Maturidade ministerial avançada"], ans:2},
+        ]}
+      ]},
+      { title:"Ética e Relacionamentos", sub:"Testemunho e unidade", lessons:[
+        { id:"2-3", type:"aula", title:"Autoridade e Submissão Espiritual",
+          sections:[
+            {h:"Liderança bíblica", body:`No Reino de Deus, autoridade não nasce do poder, mas do chamado. Deus governa Sua igreja por meio de liderança espiritual — pastores, líderes e discipuladores — para cuidar, proteger, ensinar e corrigir.\n\n<strong>Autoridade bíblica não é controle — é cuidado.</strong>`},
+            {h:"Submissão — o caminho do crescimento", body:`A Bíblia nos chama a viver debaixo de autoridade espiritual. Submissão não diminui, não humilha — protege. Ela traz alinhamento, crescimento e cobertura espiritual.\n\n<strong>Quem não se submete não cresce — apenas se isola.</strong>`,
+              verses:["Obedecei a vossos líderes e sede submissos a eles. — Hb 13:17","Melhor é obedecer do que sacrificar. — 1 Sm 15:22"]}],
+          reflections:["Como você reage quando é corrigido?","Você respeita a liderança espiritual que Deus colocou sobre sua vida?"],
+          memVerse:"Melhor é obedecer. — 1 Sm 15:22"},
+        { id:"2-4", type:"aula", title:"Compromisso, Disciplina e Responsabilidade",
+          sections:[
+            {h:"Compromisso e Pontualidade", body:`No Reino de Deus, compromisso não é opcional — é uma expressão de honra. Pontualidade revela respeito, prioridade e responsabilidade. Quem chega no horário demonstra que valoriza o que está fazendo para Deus.\n\n<strong>Fidelidade começa no relógio.</strong>`,
+              verses:["Tudo seja feito com decência e ordem. — 1 Co 14:40"]},
+            {h:"Excelência — servimos ao Senhor", body:`Servir não é apenas fazer — é fazer bem. Excelência significa dar o melhor, cuidar dos detalhes e honrar a Deus em tudo. Deus não se agrada de algo feito de qualquer maneira.`,
+              verses:["Tudo quanto fizerdes, fazei-o de todo o coração, como para o Senhor. — Cl 3:23","Sede firmes e constantes. — 1 Co 15:58"]}],
+          reflections:["Você tem honrado seus compromissos?","Seu serviço reflete excelência?"],
+          memVerse:"Sede firmes e constantes. — 1 Co 15:58"},
+        { id:"2-5", type:"aula", title:"Unidade, Comunicação e Trabalho em Equipe",
+          sections:[
+            {h:"Somos um corpo", body:`A igreja não é um grupo de indivíduos, mas um corpo espiritual. Cada pessoa tem uma função, cada ministério é importante, ninguém é descartável.\n\n<strong>Unidade não é uniformidade — é harmonia.</strong>`,
+              verses:["O corpo não é um só membro, mas muitos. — 1 Co 12:14"]},
+            {h:"Comunicação e conflitos", body:`Onde há pessoas, haverá diferenças. Mas no Reino de Deus, conflitos não devem gerar divisão. Jesus nos ensinou a resolver problemas: fale com a pessoa, não sobre a pessoa; busque restauração, não vitória.\n\n<strong>Fofoqueiros destroem o corpo. Pacificadores fortalecem o corpo.</strong>`,
+              verses:["Segui a paz com todos. — Hb 12:14","Se teu irmão pecar contra ti, vai e repreende-o entre ti e ele só. — Mt 18:15"]}],
+          reflections:["Como você reage em conflitos?","Você promove unidade ou divisão?"],
+          memVerse:"Bem-aventurados os pacificadores. — Mt 5:9"},
+        { id:"2-6", type:"aula", title:"Ética Cristã e Testemunho",
+          sections:[
+            {h:"Um só testemunho — dentro e fora da igreja", body:`Não existe "cristão de igreja" e "cristão de semana". Nossa fé deve aparecer em todo lugar. As pessoas observam nossa vida, nosso comportamento fala mais que nossas palavras, representamos Jesus onde estivermos.\n\nComo voluntários, somos referências. <strong>Nosso testemunho pode aproximar ou afastar pessoas de Cristo.</strong>`,
+              verses:["Vós sois o sal da terra… vós sois a luz do mundo. — Mt 5:13-16"]},
+            {h:"Vivendo uma vida digna do Evangelho", body:`Integridade é ser a mesma pessoa em todo lugar, não viver uma vida dupla e honrar a Deus com atitudes. Servir na igreja exige mais responsabilidade espiritual, não menos.`,
+              verses:["Portai-vos de modo digno do Evangelho. — Fp 1:27"]}],
+          reflections:["Seu testemunho glorifica a Deus?","Você representa bem Cristo onde está?"],
+          memVerse:"Portai-vos de modo digno do Evangelho. — Fp 1:27"},
+        { id:"2-q2", type:"quiz", title:"Teste — Ética e Relacionamentos", questions:[
+          {q:"Como Jesus orienta a resolver conflitos em Mateus 18:15?", opts:["Publicando o erro nas redes sociais","Pedindo que a liderança resolva imediatamente","Indo falar com a própria pessoa, em particular","Ignorando e esperando o tempo resolver"], ans:2},
+          {q:"O que a excelência no serviço revela, segundo Colossenses 3:23?", opts:["Que queremos ser reconhecidos","Que fazemos tudo para o Senhor, não para homens","Que temos mais talento que os outros","Que queremos uma posição melhor na igreja"], ans:1},
+          {q:"Por que o testemunho cristão importa fora da igreja?", opts:["Não importa, apenas dentro da igreja conta","As pessoas 'leem' nossa vida e formam opinião sobre Deus","Para mostrar que somos superiores moralmente","Para conseguir mais seguidores nas redes sociais"], ans:1},
+        ]}
+      ]}
+    ]
+  },
+  { id:3, name:"Crescer", sub:"Obreiro", color:"lv3", icon:"🌱",
+    desc:"Você está formado como obreiro maduro, cheio do Espírito Santo e preparado para cuidar de pessoas.",
+    modules:[
+      { title:"Vida no Espírito", sub:"Maturidade e dependência", lessons:[
+        { id:"3-1", type:"aula", title:"Vida Cheia do Espírito Santo",
+          sections:[
+            {h:"Dependência do Espírito", body:`A maturidade cristã não é medida por quanto sabemos, mas por quanto dependemos do Espírito Santo. Ser guiado pelo Espírito significa orar antes de decidir, ouvir antes de agir e submeter desejos à vontade de Deus.\n\n<strong>Cristianismo sem Espírito vira religião. Obreiro sem dependência vira ativista.</strong>`,
+              verses:["Andai no Espírito. — Gl 5:16","Todos os que são guiados pelo Espírito de Deus são filhos de Deus. — Rm 8:14"]},
+            {h:"Plenitude contínua", body:`Ser cheio do Espírito não é algo que acontece apenas uma vez. No grego, "enchei-vos do Espírito" significa "continuem sendo cheios". O Espírito Santo não quer apenas te visitar — Ele quer te governar.\n\n<strong>Quanto mais nos rendemos, mais Ele flui.</strong>`,
+              verses:["Enchei-vos do Espírito. — Ef 5:18"]}],
+          reflections:["Em quais áreas você ainda tenta viver sem depender do Espírito?","Como você pode ser mais sensível à voz de Deus?"],
+          memVerse:"Não por força nem por poder, mas pelo Meu Espírito. — Zc 4:6"},
+        { id:"3-2", type:"aula", title:"Vida de Oração e Intercessão",
+          sections:[
+            {h:"Oração como fundamento", body:`Todo ministério que não nasce da oração termina em cansaço. A oração nos conecta a Deus, nos dá direção e nos fortalece espiritualmente.\n\n<strong>Obreiro que não ora vira apenas um trabalhador religioso.</strong>`,
+              verses:["Orai em todo tempo. — Ef 6:18"]},
+            {h:"Autoridade espiritual", body:`Nossa autoridade não vem do cargo — vem de Cristo. Quando oramos em Cristo, enfrentamos o mal, liberamos o céu e trazemos mudança espiritual.`,
+              verses:["Eis que vos dou autoridade. — Lc 10:19"]}],
+          reflections:["Sua vida de oração sustenta seu serviço?","Você tem exercido autoridade espiritual?"],
+          memVerse:"Muito pode, por sua eficácia, a súplica do justo. — Tg 5:16"},
+        { id:"3-q1", type:"quiz", title:"Teste — Vida no Espírito", questions:[
+          {q:"O que significa, no grego original, 'enchei-vos do Espírito' (Ef 5:18)?", opts:["Receber o Espírito apenas uma vez na conversão","'Continuem sendo cheios' — é um processo contínuo","Ter manifestações visíveis do Espírito em público","Alcançar a perfeição espiritual"], ans:1},
+          {q:"Segundo a aula, o que acontece quando o obreiro não ora?", opts:["Nada muda, o serviço continua igual","Ele perde a salvação gradativamente","Ele vira apenas um trabalhador religioso, sem unção","Ele fica com saúde espiritual mais fraca por 3 dias"], ans:2},
+          {q:"De onde vem a autoridade espiritual do cristão?", opts:["Do cargo que ocupa na igreja","Do tempo de conversão e experiência","Do carisma e habilidades naturais","De Cristo — não de posição"], ans:3},
+        ]}
+      ]},
+      { title:"Cuidado e Discipulado", sub:"Pastoreio e multiplicação", lessons:[
+        { id:"3-3", type:"aula", title:"Santidade, Caráter e Testemunho",
+          sections:[
+            {h:"Vida íntegra", body:`Deus nunca usa plenamente alguém que não é inteiro por dentro. Caráter é quem você é quando ninguém está olhando. O ministério pode abrir portas, mas é o caráter que mantém você de pé.`,
+              verses:["Sede irrepreensíveis. — Fp 2:15","A integridade dos retos os guia. — Pv 11:3"]},
+            {h:"Testemunho cristão", body:`Nosso comportamento fala mais alto que nossas palavras. O obreiro não pode viver uma vida dupla.\n\n<strong>Deus confia mais em caráter do que em talento. Sua vida glorifica ou contradiz o Evangelho?</strong>`,
+              verses:["Assim resplandeça a vossa luz. — Mt 5:16","O caminho dos íntegros é reto. — Pv 10:9"]}],
+          reflections:["Em que áreas Deus quer fortalecer seu caráter?","Sua vida fora da igreja é coerente com o que você professa?"],
+          memVerse:"A integridade dos retos os guia. — Pv 11:3"},
+        { id:"3-4", type:"aula", title:"Cuidado com Pessoas (Pastoreio)",
+          sections:[
+            {h:"Acolhimento — cuidar como Jesus", body:`Ministério não é sobre atividades — é sobre pessoas. Jesus não disse "organiza o templo" ou "cuida do som". Ele disse: <strong>"Cuida de pessoas."</strong>\n\nO coração pastoral é sensível à dor, atento às necessidades e movido por compaixão. Jesus não apenas pregava — Ele tocava, ouvia, restaurava e caminhava com pessoas.`,
+              verses:["Apascenta as minhas ovelhas. — Jo 21:17"]},
+            {h:"Aconselhamento cristão básico", body:`Três princípios essenciais:\n\n1. <strong>Ouvir com amor</strong> — muitas pessoas não precisam de resposta, precisam ser ouvidas.\n2. <strong>Usar a Palavra como base</strong> — conselho sem Bíblia é apenas opinião.\n3. <strong>Nunca substituir o Espírito Santo</strong> — o obreiro aponta o caminho, mas quem transforma é Deus.`,
+              verses:["Na multidão de conselheiros há segurança. — Pv 11:14"]}],
+          reflections:["Você tem um coração disponível para cuidar?","Você sabe ouvir antes de falar?"],
+          memVerse:"Levai as cargas uns dos outros. — Gl 6:2"},
+        { id:"3-5", type:"aula", title:"Discipulado que Gera Discípulos",
+          sections:[
+            {h:"O princípio de 2 Timóteo 2:2", body:`O discipulado bíblico nunca foi pensado para parar em uma pessoa. Esse versículo revela quatro gerações espirituais: Paulo → Timóteo → Homens fiéis → Outros.\n\nIsso mostra que o plano de Deus é multiplicação, não apenas adição. <strong>Ser discípulo é aprender. Ser obreiro é ensinar outros a aprenderem.</strong>`,
+              verses:["O que de mim ouviste… transmite a homens fiéis que sejam idôneos para ensinar também a outros. — 2 Tm 2:2"]},
+            {h:"O custo de discipular", body:`Discipulado não é só dar aula. É caminhar com pessoas, investir tempo, corrigir, amar e formar caráter. Jesus não apenas pregou para multidões — Ele formou doze.\n\nDiscipular exige tempo, paciência, amor e persistência. Mas o que você investe em pessoas gera frutos eternos.`,
+              verses:["Nisto é glorificado meu Pai: que deis muito fruto. — Jo 15:8"]}],
+          reflections:["Você já discipula alguém?","Está disposto a investir sua vida em outras pessoas?"],
+          memVerse:"Ide e fazei discípulos. — Mt 28:19"},
+        { id:"3-6", type:"aula", title:"Batalha Espiritual",
+          sections:[
+            {h:"Discernimento espiritual", body:`Nem tudo o que acontece na vida é apenas natural. Discernir espiritualmente é aprender a identificar o que vem de Deus, rejeitar o que vem do inimigo e não agir apenas pela emoção.\n\n<strong>O cristão maduro não reage — ele discerne.</strong>`,
+              verses:["Não ignoramos os seus ardis. — 2 Co 2:11"]},
+            {h:"A realidade da batalha espiritual", body:`A vida cristã não é neutra. Estamos em guerra espiritual. Pessoas não são o inimigo — o inimigo age por trás das situações. Precisamos de armas espirituais. <strong>Ignorar essa batalha nos torna vulneráveis.</strong>`,
+              verses:["A nossa luta não é contra carne e sangue… — Ef 6:12","Vigiai e orai, para que não entreis em tentação. — Mt 26:41"]},
+            {h:"A armadura de Deus", body:`A armadura inclui: verdade, justiça, fé, Palavra e oração. <strong>Não lutamos sozinhos — Deus nos equipa.</strong>`,
+              verses:["Revesti-vos de toda a armadura de Deus. — Ef 6:11"]}],
+          reflections:["Você vive em vigilância espiritual?","Sabe discernir ataques espirituais?"],
+          memVerse:"Revesti-vos de toda a armadura de Deus. — Ef 6:11"},
+        { id:"3-7", type:"aula", title:"Submissão, Autoridade e Governo Espiritual",
+          sections:[
+            {h:"Ordem na igreja", body:`Deus não trabalha no caos. Ele trabalha por meio de ordem espiritual. A igreja é um corpo, e todo corpo precisa de cabeça, função e estrutura.\n\n<strong>A ordem protege a igreja do erro e do abuso.</strong>`,
+              verses:["Deus não é Deus de confusão, mas de paz. — 1 Co 14:33"]},
+            {h:"Submissão — o caminho do crescimento", body:`Submissão bíblica é caminhar em alinhamento, respeitar liderança e permanecer ensinável. Quem não se submete não está pronto para liderar, porque não sabe andar em equipe espiritual. <strong>Submissão não diminui — ela prepara.</strong>`,
+              verses:["Sujeitai-vos uns aos outros no temor de Cristo. — Ef 5:21"]}],
+          reflections:["Você respeita a autoridade espiritual?","Você anda alinhado com a liderança?"],
+          memVerse:"Obedecei a vossos líderes. — Hb 13:17"},
+        { id:"3-8", type:"aula", title:"Fidelidade no Chamado",
+          sections:[
+            {h:"Perseverança — o chamado exige constância", body:`Muitos começam empolgados, mas poucos permanecem. O chamado não é uma corrida curta — é uma maratona espiritual.\n\nFidelidade é continuar quando cansa, quando dói, quando ninguém vê, quando não há reconhecimento. <strong>Deus não procura os mais rápidos — procura os mais fiéis.</strong>`,
+              verses:["Sê fiel até à morte, e dar-te-ei a coroa da vida. — Ap 2:10","Não nos cansemos de fazer o bem. — Gl 6:9"]},
+            {h:"Visão ministerial", body:`Visão é saber por que você serve, para quem você serve e para onde Deus está te levando. Quem não tem visão desiste fácil. Quem tem visão suporta o processo. <strong>Deus não chama pessoas para tarefas — chama pessoas para propósitos.</strong>`,
+              verses:["Onde não há visão, o povo perece. — Pv 29:18"]}],
+          reflections:["Você está disposto a permanecer fiel?","Seu coração está alinhado com o chamado?"],
+          memVerse:"Combati o bom combate, acabei a carreira, guardei a fé. — 2 Tm 4:7"},
+        { id:"3-q2", type:"quiz", title:"Teste Final — Nível 3 Crescer", questions:[
+          {q:"O que revela que alguém está pronto para cuidar de pessoas?", opts:["Ter formação teológica completa","Ter um coração sensível à dor e movido por compaixão","Já ter passado por dificuldades na vida","Ter muitos anos de conversão"], ans:1},
+          {q:"O que significa o princípio de 2 Timóteo 2:2 para o obreiro?", opts:["Guardar o ensinamento para si mesmo","Transmitir o que recebeu a pessoas fiéis que ensinarão outros — multiplicação","Depender sempre de um pastor para cada decisão","Estudar sozinho a Palavra de Deus"], ans:1},
+          {q:"Segundo a aula sobre batalha espiritual, o inimigo do cristão é:", opts:["Pessoas que agem contra você","Forças espirituais — pessoas não são o inimigo","A própria carne e os desejos naturais","Os líderes que te corrigem"], ans:1},
+          {q:"Por que fidelidade no chamado é mais importante que motivação inicial?", opts:["Porque Deus procura os mais rápidos","Porque motivação sempre some — mas fidelidade permanece e é o que Deus procura","Porque motivação é pecado no ministério","Porque fidelidade substitui a necessidade de oração"], ans:1},
+        ]}
+      ]}
+    ]
+  },
+  { id:4, name:"Liderar", sub:"Líder", color:"lv4", icon:"👑",
+    desc:"Você foi formado como líder que gera pessoas, multiplica discípulos e serve com visão.",
+    modules:[
+      { title:"Liderança e Visão", sub:"Servir e inspirar", lessons:[
+        { id:"4-1", type:"aula", title:"Liderança Segundo o Coração de Deus",
+          sections:[
+            {h:"O modelo de Jesus para liderar", body:`No mundo, liderança é associada a poder, controle e autoridade sobre pessoas. Mas no Reino de Deus, Jesus apresentou um modelo completamente diferente.\n\nJesus inverteu a lógica do mundo. Para Ele, o maior não é quem manda mais — é quem <strong>serve mais</strong>. O próprio Jesus, sendo Senhor de tudo, lavou pés, tocou feridos e se entregou na cruz.\n\n<strong>Autoridade no Reino vem do serviço, não da posição.</strong>`,
+              verses:["Quem quiser tornar-se grande entre vós, seja esse o que vos sirva. — Mt 20:26-28"]},
+            {h:"A diferença entre chefe e líder", body:`Um chefe usa pessoas para cumprir tarefas. Um líder bíblico usa tarefas para formar pessoas.\n\nO chefe busca controle. O líder busca cuidado, crescimento e edificação. No Reino de Deus, liderança não é sobre status — é sobre <strong>responsabilidade espiritual.</strong>`,},
+            {h:"Autoridade que nasce do exemplo", body:`Jesus não impunha — Ele inspirava. Pessoas seguem líderes que vivem o que pregam, têm integridade e demonstram amor.\n\n<strong>A liderança bíblica é construída sobre confiança, não sobre medo.</strong>`}],
+          reflections:["O que é liderança bíblica para você?","Seu estilo de liderança se parece com o de Jesus?"],
+          memVerse:"Quem quiser tornar-se grande entre vós, seja esse o que vos sirva. — Mt 20:26"},
+        { id:"4-2", type:"aula", title:"Visão e Propósito",
+          sections:[
+            {h:"O que é visão no Reino de Deus", body:`Visão é a capacidade de ver o que Deus quer fazer antes de acontecer. Não é apenas ter ideias — é ter direção espiritual.\n\nUm líder sem visão se perde, desanima e desorienta outros. Um líder com visão inspira, alinha e move pessoas.`,
+              verses:["Onde não há visão, o povo perece. — Pv 29:18"]},
+            {h:"Visão traz foco e perseverança", body:`Visão não elimina lutas — ela dá razão para continuar. Líderes com visão suportam críticas, permanecem firmes e enxergam além do presente.\n\nDeus não chama líderes para tarefas, mas para <strong>propósitos.</strong>`}],
+          reflections:["Qual é a visão que Deus colocou em você?","Suas escolhas estão alinhadas com seu propósito?"],
+          memVerse:"Onde não há visão, o povo perece. — Pv 29:18"},
+        { id:"4-q1", type:"quiz", title:"Teste — Liderança e Visão", questions:[
+          {q:"Qual é a principal diferença entre um chefe e um líder bíblico?", opts:["O chefe é mais experiente que o líder","O líder usa tarefas para formar pessoas; o chefe usa pessoas para cumprir tarefas","O chefe é pago e o líder é voluntário","O líder tem mais autoridade que o chefe"], ans:1},
+          {q:"De onde vem a autoridade do líder bíblico, segundo a aula?", opts:["Do cargo e da posição que ocupa","Do serviço e do exemplo de vida","Do tempo de conversão","Da indicação dos membros da igreja"], ans:1},
+          {q:"Por que visão é essencial para um líder, segundo Provérbios 29:18?", opts:["Para impressionar a congregação com planos grandiosos","Para ter mais poder e influência na igreja","Porque sem visão o povo perece — visão dá direção e perseverança","Para conseguir recursos financeiros mais facilmente"], ans:2},
+        ]}
+      ]},
+      { title:"Formação e Conflitos", sub:"Multiplicar e restaurar", lessons:[
+        { id:"4-3", type:"aula", title:"Formação de Discípulos",
+          sections:[
+            {h:"O chamado central da liderança", body:`Jesus não disse "ide e construí templos" ou "ide e criem programas". Ele disse: <strong>"Ide e fazei discípulos."</strong> O centro do ministério é pessoas.\n\nLíder que não forma pessoas constrói estruturas vazias.`,
+              verses:["Ide e fazei discípulos. — Mt 28:19"]},
+            {h:"Liderança que multiplica", body:`Um líder que só centraliza cresce pouco. Um líder que forma outros cresce exponencialmente.\n\nJesus passou mais tempo com doze do que com multidões. O impacto do Seu ministério veio desses relacionamentos. <strong>O Reino de Deus avança quando líderes geram líderes.</strong>`}],
+          reflections:["Quem você está formando espiritualmente?","Seu ministério está produzindo discípulos?"],
+          memVerse:"Ide e fazei discípulos de todas as nações. — Mt 28:19"},
+        { id:"4-4", type:"aula", title:"Comunicação e Influência",
+          sections:[
+            {h:"O poder das palavras", body:`Líderes lideram principalmente com a boca. Eles inspiram, corrigem, orientam e encorajam através das palavras. Palavras podem curar, ferir, levantar ou destruir.\n\n<strong>Um líder sábio escolhe suas palavras.</strong>`,
+              verses:["A vossa palavra seja sempre agradável, temperada com sal. — Cl 4:6"]},
+            {h:"Influência espiritual", body:`Você influencia pessoas mesmo sem perceber. A pergunta é: <strong>sua influência aproxima ou afasta de Deus?</strong>\n\nLíderes maduros usam suas palavras para curar feridas, direcionar vidas e construir fé.`}],
+          reflections:["Como você costuma falar com as pessoas?","Suas palavras constroem ou destroem?"],
+          memVerse:"A vossa palavra seja sempre agradável, temperada com sal. — Cl 4:6"},
+        { id:"4-5", type:"aula", title:"Resolução de Conflitos",
+          sections:[
+            {h:"Conflitos fazem parte da vida", body:`Onde há pessoas, haverá diferenças. Mas no Reino de Deus, conflitos não devem gerar divisão — e sim crescimento. Jesus nos ensinou um caminho claro: problemas devem ser tratados diretamente, com amor e verdade.`,
+              verses:["Se teu irmão pecar contra ti, vai e repreende-o entre ti e ele só. — Mt 18:15"]},
+            {h:"O objetivo da correção", body:`Correção bíblica não visa humilhar — visa restaurar. O objetivo não é vencer uma discussão, mas <strong>ganhar um irmão.</strong>\n\nMaturidade espiritual é saber lidar com pessoas difíceis com amor.`}],
+          reflections:["Como você costuma resolver conflitos?","Você busca restauração ou apenas ter razão?"],
+          memVerse:"Segui a paz com todos. — Hb 12:14"},
+        { id:"4-6", type:"aula", title:"Multiplicação",
+          sections:[
+            {h:"O princípio da multiplicação", body:`Deus nunca planejou que o Reino crescesse apenas por adição. Líderes formam líderes, discípulos formam discípulos, ministérios se multiplicam.\n\n<strong>Se você não está formando alguém, você está parando o fluxo do Reino.</strong>`,
+              verses:["O que de mim ouviste… transmite a homens fiéis que sejam idôneos para ensinar a outros. — 2 Tm 2:2"]},
+            {h:"Gerar é mais importante que brilhar", body:`No Reino de Deus, brilhar é temporário — gerar é eterno. Jesus não ficou — Ele formou pessoas que continuaram.\n\nLíderes maduros se alegram quando seus discípulos crescem mais que eles. <strong>Toda liderança verdadeira deixa sucessores.</strong>`}],
+          reflections:["Quem você está formando hoje?","Sua liderança está gerando continuidade?"],
+          memVerse:"O que de mim ouviste, transmite a homens fiéis. — 2 Tm 2:2"},
+        { id:"4-q2", type:"quiz", title:"Teste Final — Nível 4 Liderar", questions:[
+          {q:"Qual é o objetivo da correção bíblica, segundo a aula sobre resolução de conflitos?", opts:["Vencer a discussão e provar que está certo","Humilhar a pessoa na frente de outros","Restaurar o irmão, não humilhar","Reportar o problema à liderança imediatamente"], ans:2},
+          {q:"Por que um líder que centraliza tudo cresce pouco?", opts:["Porque tem medo de perder poder","Porque gera dependência e não multiplicação — o Reino avança formando outros","Porque é egoísta por natureza","Porque Deus não abençoa quem é centralizado"], ans:1},
+          {q:"O que significa que toda liderança verdadeira deixa sucessores?", opts:["O líder deve se aposentar cedo","A liderança bíblica forma pessoas que continuam o trabalho","Os filhos biológicos devem assumir o ministério","Deve haver uma eleição a cada 4 anos"], ans:1},
+        ]}
+      ]}
+    ]
+  },
+  { id:5, name:"Enviar", sub:"Pastor / Ministro", color:"lv5", icon:"✈",
+    desc:"Você está formado como ministro, pronto para ser enviado com chamado confirmado, caráter aprovado e coração missionário.",
+    modules:[
+      { title:"Chamado e Caráter Ministerial", sub:"Fundamentos do ministério", lessons:[
+        { id:"5-1", type:"aula", title:"O Chamado Ministerial",
+          sections:[
+            {h:"Deus chama antes de enviar", body:`O ministério não começa quando alguém recebe um cargo. Ele começa quando Deus fala ao coração. O chamado não é acidental, não é produzido por homens e não nasce do desejo de posição.\n\nEle nasce do <strong>propósito eterno de Deus.</strong>`,
+              verses:["Antes que te formasse no ventre, eu te conheci… e te constituí profeta. — Jr 1:5"]},
+            {h:"Chamado é diferente de talento", body:`Talento pode ser natural. Chamado é espiritual. Alguém pode pregar bem sem ser chamado. Mas quem é chamado carrega peso espiritual, compromisso e responsabilidade.\n\nO chamado se confirma por fruto, caráter, testemunho e reconhecimento da liderança.`},
+            {h:"O processo antes do envio", body:`Antes de enviar, Deus trata, quebra, forma e prepara. <strong>Ninguém é enviado cru.</strong>`}],
+          reflections:["Você reconhece o chamado de Deus sobre sua vida?","Sua vida reflete esse chamado?"],
+          memVerse:"Antes que te formasse no ventre, eu te conheci. — Jr 1:5"},
+        { id:"5-2", type:"aula", title:"Vida e Caráter do Ministro",
+          sections:[
+            {h:"Deus procura vida antes de posição", body:`O ministério não é uma promoção — é uma responsabilidade espiritual. Deus não escolhe líderes apenas pelo desejo, e sim pelo caráter.\n\nAntes de Deus usar alguém em público, Ele observa sua vida em particular.`,
+              verses:["Se alguém aspira ao episcopado, excelente obra deseja. — 1 Tm 3:1"]},
+            {h:"Os requisitos do ministério", body:`O líder deve ser irrepreensível, sóbrio, temperante, hospitaleiro, apto para ensinar, com bom testemunho. Isso não fala de perfeição — fala de <strong>maturidade espiritual.</strong>\n\n<strong>Ministério sem caráter termina em escândalo.</strong>\n\nO líder representa Cristo 24 horas por dia. O púlpito pode esconder, mas a vida revela.`}],
+          reflections:["Quais áreas da sua vida precisam crescer para sustentar o chamado?"],
+          memVerse:"Apresenta-te a Deus aprovado, obreiro que não tem do que se envergonhar. — 2 Tm 2:15"},
+        { id:"5-q1", type:"quiz", title:"Teste — Chamado e Caráter", questions:[
+          {q:"Segundo Jeremias 1:5, quando começa o chamado de Deus?", opts:["Quando a pessoa recebe um cargo na igreja","Quando o pastor indica publicamente","Antes mesmo da formação no ventre — chamado eterno","Quando a pessoa completa o discipulado"], ans:2},
+          {q:"Como o chamado ministerial se confirma?", opts:["Por sonhos e visões apenas","Por fruto, caráter, testemunho e reconhecimento da liderança","Por quanto tempo a pessoa frequenta a igreja","Por indicação de membros por votação"], ans:1},
+          {q:"Por que 'ministério sem caráter termina em escândalo'?", opts:["Porque o mundo observa a igreja negativamente","Porque o caráter sustenta o ministério — o púlpito pode esconder, mas a vida revela","Porque os membros cobram perfeição","Porque Deus pune imediatamente quem falha"], ans:1},
+        ]}
+      ]},
+      { title:"Doutrina, Missão e Perseverança", sub:"Preparados para o envio", lessons:[
+        { id:"5-3", type:"aula", title:"Doutrina e Palavra",
+          sections:[
+            {h:"A Palavra é a base do ministério", body:`Ministério sem Bíblia vira opinião, emocionalismo e engano. A Palavra é autoridade, fundamento e direção.\n\nO ministro não pode pregar o que acha — deve pregar <strong>o que a Bíblia diz.</strong>`,
+              verses:["Procura apresentar-te a Deus aprovado… que maneja bem a palavra da verdade. — 2 Tm 2:15"]},
+            {h:"Vida de estudo", body:`Todo ministro precisa ler, estudar, meditar e buscar entendimento. Um pregador que não estuda repete frases. Um ministro que estuda libera <strong>verdade.</strong>`}],
+          reflections:["Como você tem estudado a Palavra de Deus?"],
+          memVerse:"Procura apresentar-te a Deus aprovado, que maneja bem a palavra da verdade. — 2 Tm 2:15"},
+        { id:"5-4", type:"aula", title:"Pastoreio e Cuidado",
+          sections:[
+            {h:"O chamado para pastorear", body:`O ministério não é palco — é rebanho. Deus confia vidas aos líderes. Pastorear significa proteger, alimentar, cuidar, corrigir e amar.`,
+              verses:["Pastoreai o rebanho de Deus que está entre vós. — 1 Pe 5:2"]},
+            {h:"Cuidado que gera cura", body:`Muitas pessoas não precisam de sermão — precisam de presença. O verdadeiro pastor ouve, ora, acompanha e caminha junto.\n\n<strong>Ministro que não ama pessoas não está pronto para o ministério.</strong>`}],
+          reflections:["Como você tem cuidado das pessoas que Deus te confiou?"],
+          memVerse:"Pastoreai o rebanho de Deus que está entre vós. — 1 Pe 5:2"},
+        { id:"5-5", type:"aula", title:"Missão e Envio",
+          sections:[
+            {h:"Deus é um Deus que envia", body:`O Reino de Deus não cresce por atração — cresce por envio. Desde Abraão até os apóstolos, Deus sempre enviou pessoas para levar Sua mensagem.\n\nMissão não é apenas ir longe — é ir <strong>obediente.</strong>`,
+              verses:["Como ouvirão, se não há quem pregue? — Rm 10:15"]},
+            {h:"O coração do enviado", body:`Quem é enviado vai com humildade, serve onde chega e representa Cristo. Envio não é status — é <strong>responsabilidade espiritual.</strong>\n\nAlguns Deus envia para bairros, outros para cidades, outros para nações — mas todos são enviados para <strong>pessoas.</strong>`}],
+          reflections:["Onde Deus está te chamando para servir e impactar?"],
+          memVerse:"Como ouvirão, se não há quem pregue? — Rm 10:15"},
+        { id:"5-6", type:"aula", title:"Perseverança no Ministério",
+          sections:[
+            {h:"O ministério é uma jornada", body:`Paulo não disse que foi fácil — disse que <strong>permaneceu.</strong> O ministério não é para os que começam, mas para os que terminam.`,
+              verses:["Combati o bom combate, acabei a carreira, guardei a fé. — 2 Tm 4:7"]},
+            {h:"O que faz um ministro perseverar", body:`Quem persevera mantém vida com Deus, permanece na Palavra, vive em submissão e não anda sozinho. Cansaço vem, mas quem tem propósito continua.\n\nMuitos abandonam não por falta de chamado, mas por falta de <strong>renovo espiritual.</strong>\n\nMinistro que não se alimenta espiritualmente enfraquece.`}],
+          reflections:["O que você precisa fazer hoje para perseverar no seu chamado?"],
+          memVerse:"Combati o bom combate, acabei a carreira, guardei a fé. — 2 Tm 4:7"},
+        { id:"5-q2", type:"quiz", title:"Teste Final — Nível 5 Enviar", questions:[
+          {q:"Segundo 2 Timóteo 2:15, o que o ministro deve fazer com a Palavra de Deus?", opts:["Usar apenas os versículos mais populares","Manejar bem a palavra da verdade, estudando e pregando fielmente","Adaptar a Bíblia para agradar o ouvinte","Usar a Palavra apenas para pregações públicas"], ans:1},
+          {q:"O que significa 'o ministério não é palco — é rebanho'?", opts:["O ministério não precisa de cultos públicos","O foco do ministério é cuidar de pessoas, não exibir talentos","O ministério deve ser feito em segredo","Pregação pública não é importante"], ans:1},
+          {q:"Por que a perseverança é tão enfatizada no ministério?", opts:["Porque pastores nunca podem descansar","Porque muitos abandonam por falta de renovo espiritual, não por falta de chamado","Porque Deus abandona os que param","Porque o cansaço é um sinal de falta de fé"], ans:1},
+          {q:"Qual é a diferença entre chamado e talento, segundo a aula?", opts:["São a mesma coisa com nomes diferentes","Talento é natural; chamado é espiritual — traz peso, compromisso e responsabilidade","Chamado é para pastores; talento é para músicos","Talento é mais importante que o chamado no ministério"], ans:1},
+        ]}
+      ]}
+    ]
+  }
+];
+
+// fix bad level 3 structure
+LEVELS[2].modules[0] = { title:"Vida no Espírito", sub:"Maturidade e dependência", lessons: LEVELS[2].modules[0].lessons };
+
+let progress = JSON.parse(localStorage.getItem('jds_progress')||'{}');
+let studentName = localStorage.getItem('jds_student_name') || '';
+let currentLesson = null;
+let activeLevel = 1;
+let openMods = new Set();
+const BIBLICAL_AI_URL = 'https://chatgpt.com/g/g-6a2c880aa6a88191acb0038133068d2e-assistente-biblico-jornada-do-servo';
+
+function saveProgress(){ localStorage.setItem('jds_progress', JSON.stringify(progress)); }
+function saveStudentName(name){
+  studentName = (name || '').trim();
+  if(studentName) localStorage.setItem('jds_student_name', studentName);
+  else localStorage.removeItem('jds_student_name');
+}
+function editStudentName(){
+  const name = prompt('Digite o nome do aluno para aparecer no certificado:', studentName || '');
+  if(name === null) return;
+  saveStudentName(name);
+  renderHome();
+  showToast(studentName ? `Nome salvo: ${studentName}.` : 'Nome removido.');
+}
+function renderStudentCard(){
+  const box=document.getElementById('student-card');
+  if(!box) return;
+  if(studentName){
+    box.innerHTML=`<strong>Aluno:</strong> ${studentName}<p>Este nome será usado nos certificados de conclusão.</p><div class="student-actions"><button class="btn btn-outline" onclick="editStudentName()">Editar nome</button></div>`;
+  } else {
+    box.innerHTML=`<strong>Certificado personalizado</strong><p>Informe o nome do aluno para aparecer nos certificados da Jornada.</p><div class="student-actions"><button class="btn btn-primary" onclick="editStudentName()">Informar nome do aluno</button></div>`;
+  }
+}
+function resetProgressConfirm(){
+  if(confirm('Tem certeza que deseja apagar o progresso salvo neste aparelho?')){
+    progress={}; saveProgress(); renderHome(); showToast('Progresso apagado neste aparelho.');
+  }
+}
+function isDone(id){ return progress[id]==='done'; }
+function isUnlocked(id){
+  for(let lv of LEVELS) for(let mod of lv.modules){
+    for(let i=0;i<mod.lessons.length;i++){
+      if(mod.lessons[i].id===id){
+        if(i===0){
+          // check if prev module/level last lesson done
+          let modIdx = lv.modules.indexOf(mod);
+          if(modIdx===0){
+            let lvIdx = LEVELS.indexOf(lv);
+            if(lvIdx===0) return true;
+            let prevLv = LEVELS[lvIdx-1];
+            let lastMod = prevLv.modules[prevLv.modules.length-1];
+            return isDone(lastMod.lessons[lastMod.lessons.length-1].id);
+          } else {
+            let prevMod = lv.modules[modIdx-1];
+            return isDone(prevMod.lessons[prevMod.lessons.length-1].id);
+          }
+        }
+        return isDone(mod.lessons[i-1].id);
+      }
+    }
+  }
+  return false;
+}
+function totalAll(){ return LEVELS.reduce((s,lv)=>s+lv.modules.reduce((s2,m)=>s2+m.lessons.length,0),0); }
+function doneAll(){ return Object.keys(progress).filter(k=>progress[k]==='done').length; }
+
+
+function getNextAvailableLesson(){
+  const all=getAllLessons();
+  return all.find(x=>!isDone(x.lesson.id) && isUnlocked(x.lesson.id)) || all.find(x=>!isDone(x.lesson.id)) || null;
+}
+
+function startJourney(){
+  const first=getAllLessons()[0];
+  if(first) openLesson(first.lesson.id);
+}
+
+function continueJourney(){
+  const next=getNextAvailableLesson();
+  if(next) openLesson(next.lesson.id);
+  else showToast('Parabéns! Todas as etapas disponíveis foram concluídas.');
+}
+
+function renderLevelOverview(){
+  const box=document.getElementById('levels-overview');
+  if(!box) return;
+  const taglines={
+    1:'Firmando os primeiros passos com Cristo.',
+    2:'Descobrindo que todo salvo é chamado para servir.',
+    3:'Amadurecendo no Espírito, na Palavra e no cuidado com pessoas.',
+    4:'Formando discípulos e influenciando vidas com o exemplo de Cristo.',
+    5:'Preparado para cumprir o chamado com fidelidade e propósito.'
+  };
+  const descriptions={
+    1:'Fundamentos da fé, salvação, nova vida, igreja, oração, Palavra, batismo e fidelidade ao Senhor.',
+    2:'Serviço cristão, caráter, humildade, compromisso, unidade, ética, testemunho e honra no Corpo de Cristo.',
+    3:'Vida cheia do Espírito, oração, santidade, cuidado, discipulado, batalha espiritual, submissão e fidelidade.',
+    4:'Liderança bíblica, visão, propósito, comunicação, resolução de conflitos e multiplicação.',
+    5:'Chamado ministerial, caráter, doutrina, pastoreio, missão, envio e perseverança.'
+  };
+  box.innerHTML=LEVELS.map(lv=>`
+    <article class="level-overview-card ${lv.color}" onclick="activeLevel=${lv.id}; renderHome(); document.getElementById('level-tabs').scrollIntoView({behavior:'smooth',block:'start'});">
+      <div class="level-overview-icon mod-icon">${lv.icon}</div>
+      <div>
+        <h3>Nível ${lv.id} — ${lv.name}</h3>
+        <div class="tagline">${taglines[lv.id]}</div>
+        <p>${descriptions[lv.id]}</p>
+      </div>
+    </article>`).join('');
+}
+
+function renderAchievements(){
+  const box=document.getElementById('achievements-box');
+  if(!box) return;
+  const all=getAllLessons();
+  const done=doneAll();
+  const isLevelDone=(levelId)=>{
+    const lv=LEVELS.find(l=>l.id===levelId);
+    return !!lv && lv.modules.every(m=>m.lessons.every(l=>isDone(l.id)));
+  };
+  const hasDoneTitle=(text)=>all.some(x=>isDone(x.lesson.id) && x.lesson.title.toLowerCase().includes(text.toLowerCase()));
+  const badges=[
+    {icon:'🏅',title:'Primeiros Passos',desc:'Concluiu a primeira etapa.',ok:done>=1},
+    {icon:'📖',title:'Amante da Palavra',desc:'Avançou na vida devocional.',ok:hasDoneTitle('Vida Devocional')},
+    {icon:'🙏',title:'Vida de Oração',desc:'Estudou oração e intercessão.',ok:hasDoneTitle('Oração')},
+    {icon:'🤝',title:'Coração de Servo',desc:'Concluiu o Nível 2.',ok:isLevelDone(2)},
+    {icon:'🔥',title:'Chamado em Formação',desc:'Chegou ao Nível 3.',ok:LEVELS.find(l=>l.id===3).modules.some(m=>m.lessons.some(l=>isUnlocked(l.id)||isDone(l.id)))},
+    {icon:'🌍',title:'Enviado para Servir',desc:'Concluiu o Nível 5.',ok:isLevelDone(5)}
+  ];
+  box.innerHTML=`<h3>Conquistas espirituais</h3><p>Marcos simples para encorajar sua caminhada, sem perder o foco principal: crescer em Cristo.</p><div class="achievement-grid">${badges.map(b=>`<div class="achievement-pill ${b.ok?'unlocked':''}"><strong>${b.icon} ${b.title}</strong>${b.desc}</div>`).join('')}</div>`;
+}
+
+function renderHome(){
+  // tabs
+  const tabs = document.getElementById('level-tabs');
+  tabs.innerHTML = '';
+  LEVELS.forEach(lv=>{
+    const allDone = lv.modules.every(m=>m.lessons.every(l=>isDone(l.id)));
+    const tab = document.createElement('button');
+    tab.className = 'level-tab'+(activeLevel===lv.id?' active':'')+(allDone?' done':'');
+    tab.textContent = lv.icon+' '+lv.name;
+    tab.onclick=()=>{ activeLevel=lv.id; renderHome(); };
+    tabs.appendChild(tab);
+  });
+  // progress
+  const done=doneAll(), total=totalAll();
+  const pct = Math.round(done/total*100);
+  document.getElementById('main-progress').style.width=pct+'%';
+  document.getElementById('progress-label').textContent=`${done} de ${total} etapas concluídas (${pct}%)`;
+  const jpPct=document.getElementById('journey-pct'); if(jpPct) jpPct.textContent=pct+'%';
+  const jt=document.getElementById('journey-title'); if(jt) jt.textContent=pct===0?'Comece sua caminhada':pct<50?'Continue crescendo':pct<100?'Você está avançando':'Jornada concluída';
+  const next=getNextAvailableLesson();
+  const ns=document.getElementById('next-step-box');
+  if(ns) ns.textContent = next ? `Próximo passo: ${next.lesson.title} — Nível ${next.lv.id} ${next.lv.name}` : 'Parabéns! Você concluiu todas as etapas disponíveis.';
+  renderStudentCard();
+  renderAchievements();
+  renderLevelOverview();
+  // hero
+  const lv = LEVELS.find(l=>l.id===activeLevel);
+  document.getElementById('hero-badge').textContent = `Nível ${lv.id} — ${lv.name}`;
+  // modules
+  const container = document.getElementById('modules-list');
+  container.innerHTML='';
+  lv.modules.forEach((mod,mi)=>{
+    const modKey = `${lv.id}-${mi}`;
+    const allDone = mod.lessons.every(l=>isDone(l.id));
+    const isOpen = openMods.has(modKey);
+    const card = document.createElement('div');
+    card.className = `mod-card ${lv.color}`;
+    const icons = ['📖','🙏','✝','⚡','🌟','🤝','👁','🔥'];
+    card.innerHTML = `
+      <div class="mod-header" onclick="toggleMod('${modKey}')">
+        <div class="mod-icon">${icons[mi%icons.length]}</div>
+        <div class="mod-info">
+          <div class="mod-title">${mod.title}</div>
+          <div class="mod-sub">${mod.sub}</div>
+        </div>
+        ${allDone?'<span style="color:#0F6E56;font-size:18px">✓</span>':'<span class="mod-chevron '+(isOpen?'open':'')+'">▾</span>'}
+      </div>
+      <div class="mod-lessons ${isOpen?'open':''}" id="mod-${modKey}">
+        ${mod.lessons.map(l=>{
+          const done=isDone(l.id), unlocked=isUnlocked(l.id);
+          const dotCls = done?'dot-done':unlocked?'dot-active':'dot-locked';
+          const dotIcon = done?'✓':unlocked?'▶':'🔒';
+          const badgeCls = l.type==='quiz'?'badge-quiz':'badge-aula';
+          const badgeTxt = l.type==='quiz'?'Teste':'Aula';
+          return `<div class="lesson-row ${!unlocked?'locked':''}" onclick="${unlocked?`openLesson('${l.id}')`:''}" style="${!unlocked?'cursor:default':''}">
+            <div class="l-dot ${dotCls}" style="font-size:10px">${dotIcon}</div>
+            <span class="l-name">${l.title}</span>
+            <span class="l-badge ${badgeCls}">${badgeTxt}</span>
+          </div>`;
+        }).join('')}
+      </div>`;
+    container.appendChild(card);
+  });
+}
+
+function toggleMod(key){
+  if(openMods.has(key)) openMods.delete(key); else openMods.add(key);
+  renderHome();
+}
+
+function getAllLessons(){
+  const all=[];
+  for(let lv of LEVELS) for(let mod of lv.modules) for(let l of mod.lessons) all.push({lesson:l,lv});
+  return all;
+}
+
+function openLesson(id){
+  stopSpeech();
+  updateAudioStatus('Status: leitura pronta.');
+  const found = getAllLessons().find(x=>x.lesson.id===id);
+  if(!found) return;
+  currentLesson = found.lesson;
+  const lv = found.lv;
+  if(currentLesson.type==='aula'){
+    document.getElementById('ls-title').textContent = currentLesson.title;
+    document.getElementById('ls-meta').innerHTML = `<span>Nível ${lv.id} — ${lv.name}</span><span>Aula</span><span>8 a 12 min</span>`;
+    document.getElementById('ls-content').innerHTML = buildLessonHtml(currentLesson);
+    showScreen('lesson-screen');
+  } else {
+    openQuiz(currentLesson);
+  }
+}
+
+
+function pWrap(text){
+  return String(text||'').replace(/\n\n/g,'</p><p>');
+}
+
+function buildList(items){
+  if(!items || !items.length) return '';
+  return `<ul>${items.map(i=>`<li>${i}</li>`).join('')}</ul>`;
+}
+
+function buildLessonHtml(lesson){
+  let html = '';
+  html += `<div class="lesson-card key-card"><h3>Antes de começar</h3><p>Ore e peça ao Espírito Santo para abrir seu entendimento. Esta aula não é apenas informação; é uma oportunidade de crescer na presença de Deus.</p></div>`;
+  if(lesson.objectives){
+    html += `<div class="lesson-card"><h3>🎯 Objetivo da aula</h3>${buildList(lesson.objectives)}</div>`;
+  }
+  if(lesson.keyVerse){
+    html += `<div class="lesson-card key-card"><h3>📖 Palavra-chave</h3><blockquote>${lesson.keyVerse}</blockquote></div>`;
+  }
+  html += `<div class="lesson-card"><h3>📘 Entenda a verdade</h3>`;
+  (lesson.sections||[]).forEach(s=>{
+    html += `<h3>${s.h}</h3><p>${pWrap(s.body)}</p>`;
+    if(s.verses) s.verses.forEach(v=>{ html+=`<blockquote>${v}</blockquote>`; });
+  });
+  html += `</div>`;
+  if(lesson.heartNote){
+    html += `<div class="lesson-card heart-card"><h3>💡 Para guardar no coração</h3><p><strong>${lesson.heartNote}</strong></p></div>`;
+  }
+  if(lesson.prayer){
+    html += `<div class="lesson-card prayer-card"><h3>🙏 Ore assim</h3><p>${pWrap(lesson.prayer)}</p></div>`;
+  }
+  if(lesson.challenge){
+    html += `<div class="lesson-card challenge-card"><h3>✅ Desafio da semana</h3>${Array.isArray(lesson.challenge)?buildList(lesson.challenge):`<p>${pWrap(lesson.challenge)}</p>`}</div>`;
+  }
+  if(lesson.reflections){
+    html += `<div class="reflections"><h4>📝 Perguntas para reflexão</h4><ul>`;
+    lesson.reflections.forEach(r=>{ html+=`<li>${r}</li>`; });
+    html += `</ul></div>`;
+  }
+  if(lesson.extraReading){
+    html += `<div class="lesson-card growth-card"><h3>📚 Para continuar crescendo</h3>${buildList(lesson.extraReading)}</div>`;
+  }
+  html += `<div class="action-card"><h4>💬 Tenho uma dúvida sobre esta aula</h4><p>Clique no botão abaixo para falar diretamente com o Pastor Kauê pelo WhatsApp.</p><button class="btn btn-whatsapp" onclick="openWhatsAppQuestion()">Falar com o Pastor Kauê</button></div>`;
+  html += `<div class="action-card"><h4>🤖 Perguntar à IA Bíblica</h4><p>Clique no botão abaixo para abrir o Assistente Bíblico da Jornada do Servo. Ele ajuda a responder dúvidas com base nas Escrituras. As respostas ajudam no estudo, mas não substituem a Bíblia, a oração, a comunhão da igreja e o acompanhamento pastoral.</p><button class="btn btn-ai" onclick="openBiblicalAI()">Abrir Assistente Bíblico</button></div>`;
+  if(lesson.memVerse){
+    html += `<div class="verse-mem"><strong>📖 Versículo para memorizar</strong>${lesson.memVerse}</div>`;
+  }
+  return html;
+}
+
+function openWhatsAppQuestion(){
+  const title = currentLesson?.title || 'aula da Jornada do Servo';
+  const msg = `Olá, Pastor Kauê. Estou fazendo a Jornada do Servo e tenho uma dúvida sobre a aula: ${title}.`;
+  window.open(`https://wa.me/5547989228302?text=${encodeURIComponent(msg)}`,'_blank');
+}
+
+function openBiblicalAI(){
+  if(BIBLICAL_AI_URL){
+    window.open(BIBLICAL_AI_URL,'_blank');
+    return;
+  }
+  showToast('Assistente Bíblico em preparação. Na próxima etapa, criaremos o GPT personalizado e colocaremos o link aqui. Por enquanto, use o WhatsApp para dúvidas pastorais.');
+}
+
+function showToast(message){
+  const toast=document.getElementById('pastoral-toast');
+  if(!toast){ alert(message); return; }
+  toast.textContent=message;
+  toast.classList.add('show');
+  clearTimeout(window.toastTimer);
+  window.toastTimer=setTimeout(()=>toast.classList.remove('show'),5200);
+}
+
+function completeLesson(){
+  stopSpeech();
+  if(!currentLesson) return;
+  progress[currentLesson.id]='done';
+  saveProgress();
+  const title=currentLesson.title;
+  goHome();
+  showToast(`Muito bem! Você concluiu: ${title}. Que esta verdade crie raízes no seu coração.`);
+}
+
+function openQuiz(lesson){
+  stopSpeech();
+  document.getElementById('qs-title').textContent = lesson.title;
+  document.getElementById('qs-meta').textContent = `${lesson.questions.length} questões de verificação`;
+  document.getElementById('qs-result').style.display='none';
+  document.getElementById('qs-buttons').innerHTML = `<button class="btn btn-primary" onclick="submitQuiz()">Enviar respostas</button>`;
+  document.getElementById('qs-questions').innerHTML = lesson.questions.map((q,qi)=>`
+    <div class="q-block">
+      <div class="q-text">${qi+1}. ${q.q}</div>
+      ${q.opts.map((opt,oi)=>`
+        <label class="q-opt" id="opt-${qi}-${oi}" onclick="selectOpt(${qi},${oi})">
+          <input type="radio" name="q${qi}" value="${oi}"> ${opt}
+        </label>`).join('')}
+      <div class="q-feedback" id="fb-${qi}"></div>
+    </div>`).join('');
+  showScreen('quiz-screen');
+}
+
+function selectOpt(qi,oi){
+  const n = currentLesson.questions[qi].opts.length;
+  for(let i=0;i<n;i++){const e=document.getElementById(`opt-${qi}-${i}`);if(e)e.classList.remove('selected');}
+  document.getElementById(`opt-${qi}-${oi}`)?.classList.add('selected');
+}
+
+function submitQuiz(){
+  let correct=0, allAnswered=true;
+  currentLesson.questions.forEach((q,qi)=>{
+    const sel=document.querySelector(`input[name="q${qi}"]:checked`);
+    if(!sel){allAnswered=false;return;}
+    const oi=parseInt(sel.value);
+    document.getElementById(`opt-${qi}-${oi}`)?.classList.remove('selected');
+    const fb=document.getElementById(`fb-${qi}`);
+    const correctText=q.opts[q.ans];
+    if(oi===q.ans){
+      document.getElementById(`opt-${qi}-${oi}`)?.classList.add('correct'); correct++;
+      if(fb){ fb.classList.add('show'); fb.innerHTML=`✓ Correto. Resposta bíblica: <strong>${correctText}</strong>`; }
+    }
+    else {
+      document.getElementById(`opt-${qi}-${oi}`)?.classList.add('wrong');
+      document.getElementById(`opt-${qi}-${q.ans}`)?.classList.add('correct');
+      if(fb){ fb.classList.add('show'); fb.innerHTML=`Revise este ponto. A resposta mais alinhada com a aula é: <strong>${correctText}</strong>`; }
+    }
+  });
+  if(!allAnswered){alert('Por favor, responda todas as questões.');return;}
+  const pct=Math.round(correct/currentLesson.questions.length*100);
+  const passed=pct>=70;
+  const res=document.getElementById('qs-result');
+  res.style.display='block';
+  res.innerHTML=`<div class="result-box"><div class="result-score">${pct}%</div><div class="result-msg">${correct} de ${currentLesson.questions.length} corretas — ${passed?'✓ Aprovado! Você pode avançar.':'Revise o conteúdo e tente novamente (mínimo 70%).'}</div></div>`;
+  document.getElementById('qs-buttons').innerHTML = passed
+    ? `<button class="btn btn-primary" onclick="completeQuiz()">✓ Concluir e avançar</button><button class="btn btn-outline" onclick="goHome()">Voltar ao início</button>`
+    : `<button class="btn btn-primary" onclick="retryQuiz()">↺ Tentar novamente</button><button class="btn btn-outline" onclick="goHome()">Voltar ao início</button>`;
+  document.querySelectorAll('.q-opt input').forEach(i=>i.disabled=true);
+  document.querySelectorAll('.q-opt').forEach(o=>o.style.cursor='default');
+}
+
+function completeQuiz(){
+  progress[currentLesson.id]='done'; saveProgress();
+  // check level completion
+  const lv = getAllLessons().find(x=>x.lesson.id===currentLesson.id)?.lv;
+  if(lv){
+    const lvDone = lv.modules.every(m=>m.lessons.every(l=>isDone(l.id)));
+    if(lvDone){ showCert(lv); return; }
+  }
+  goHome();
+}
+
+function showCert(lv){
+  if(!studentName){
+    const name = prompt('Digite o nome do aluno para aparecer no certificado:', '');
+    if(name !== null) saveStudentName(name);
+  }
+  const student=document.getElementById('cert-student-name');
+  if(student) student.textContent = studentName || 'Aluno da Jornada do Servo';
+  document.getElementById('cert-level-name').textContent=`Jornada do Servo — Nível ${lv.id}`;
+  document.getElementById('cert-level-sub').textContent=`${lv.name} — ${lv.sub}`;
+  const verse = '“Aquele que começou boa obra em vocês vai completá-la até o dia de Cristo Jesus.” — Filipenses 1:6';
+  document.getElementById('cert-body').innerHTML=(lv.desc||'Parabéns por concluir este nível!')+`<div class="cert-verse">${verse}</div><p style="margin-top:.75rem">Ministério Evangélico Palavra de Vida<br><strong>Pr. Kauê Yuri de Oliveira</strong></p>`;
+  document.getElementById('cert-date').textContent=`Emitido em: ${new Date().toLocaleDateString('pt-BR')}`;
+  showScreen('cert-screen');
+}
+
+
+function updateAudioStatus(message){
+  const status = document.getElementById('audio-status');
+  if(status) status.textContent = message;
+}
+
+function getPreferredPortugueseVoice(){
+  const voices = window.speechSynthesis ? speechSynthesis.getVoices() : [];
+  return voices.find(v => v.lang === 'pt-BR') ||
+         voices.find(v => v.lang && v.lang.toLowerCase().startsWith('pt')) ||
+         null;
+}
+
+function buildReadableLessonText(){
+  const title = document.getElementById('ls-title')?.innerText || '';
+  const lesson = currentLesson;
+  if(!lesson || lesson.type !== 'aula'){
+    return title;
+  }
+
+  let parts = [title];
+
+  (lesson.sections || []).forEach(section => {
+    parts.push(`Tópico: ${section.h}.`);
+    const body = (section.body || '')
+      .replace(/<[^>]*>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+    if(body) parts.push(body);
+
+    (section.verses || []).forEach(verse => {
+      parts.push(`Versículo: ${verse}.`);
+    });
+  });
+
+  if(lesson.reflections && lesson.reflections.length){
+    parts.push('Perguntas para reflexão.');
+    lesson.reflections.forEach(question => parts.push(question));
+  }
+
+  if(lesson.memVerse){
+    parts.push(`Versículo para memorizar: ${lesson.memVerse}.`);
+  }
+
+  return parts.join(' ');
+}
+
+function speakLesson(){
+  if(!('speechSynthesis' in window)){
+    alert('Este navegador não possui suporte para leitura por voz.');
+    return;
+  }
+
+  stopSpeech(false);
+
+  const fullText = buildReadableLessonText();
+
+  if(!fullText.trim()){
+    alert('Não há conteúdo disponível para leitura.');
+    updateAudioStatus('Status: não há conteúdo disponível para leitura.');
+    return;
+  }
+
+  const utterance = new SpeechSynthesisUtterance(fullText);
+  utterance.lang = 'pt-BR';
+  utterance.rate = 0.85;
+  utterance.pitch = 1;
+  utterance.volume = 1;
+
+  const voice = getPreferredPortugueseVoice();
+  if(voice) utterance.voice = voice;
+
+  utterance.onstart = () => {
+    updateAudioStatus('Status: lendo a aula em voz alta...');
+    const btn = document.getElementById('btn-speak');
+    if(btn) btn.textContent = '🔊 Lendo...';
+  };
+
+  utterance.onend = () => {
+    updateAudioStatus('Status: leitura concluída.');
+    const btn = document.getElementById('btn-speak');
+    if(btn) btn.textContent = '🎧 Ouvir aula';
+  };
+
+  utterance.onerror = () => {
+    updateAudioStatus('Status: a leitura foi interrompida.');
+    const btn = document.getElementById('btn-speak');
+    if(btn) btn.textContent = '🎧 Ouvir aula';
+  };
+
+  window.currentUtterance = utterance;
+  speechSynthesis.speak(utterance);
+}
+
+function pauseSpeech(){
+  if(!('speechSynthesis' in window)) return;
+  if(speechSynthesis.speaking && !speechSynthesis.paused){
+    speechSynthesis.pause();
+    updateAudioStatus('Status: leitura pausada.');
+  }
+}
+
+function resumeSpeech(){
+  if(!('speechSynthesis' in window)) return;
+  if(speechSynthesis.paused){
+    speechSynthesis.resume();
+    updateAudioStatus('Status: continuando leitura...');
+  }
+}
+
+function stopSpeech(showMessage = true){
+  if('speechSynthesis' in window && (speechSynthesis.speaking || speechSynthesis.paused)){
+    speechSynthesis.cancel();
+  }
+  const btn = document.getElementById('btn-speak');
+  if(btn) btn.textContent = '🎧 Ouvir aula';
+  if(showMessage) updateAudioStatus('Status: leitura encerrada.');
+}
+
+if('speechSynthesis' in window){
+  speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+}
+
+function retryQuiz(){ openQuiz(currentLesson); }
+function goHome(){ stopSpeech(); showScreen('home-screen'); renderHome(); }
+function showScreen(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+function printCert(){ window.print(); }
+
+// fix level 3 module structure
+(function fixData(){
+  const lv3 = LEVELS[2];
+  lv3.modules = [
+    { title:"Vida no Espírito", sub:"Maturidade e dependência", lessons:[
+      lv3.modules[0].lessons.find(l=>l.id==='3-1'),
+      lv3.modules[0].lessons.find(l=>l.id==='3-2'),
+      lv3.modules[0].lessons.find(l=>l.id==='3-q1'),
+    ].filter(Boolean)},
+    { title:"Cuidado e Discipulado", sub:"Pastoreio e multiplicação", lessons:[
+      lv3.modules[1]?.lessons||[]
+    ].flat().filter(Boolean)}
+  ];
+})();
+
+
+// V2 content enhancements: new lessons and pastoral blocks
+(function enhanceV2(){
+  const lv1=LEVELS.find(l=>l.id===1);
+  const lv2=LEVELS.find(l=>l.id===2);
+  const lv3=LEVELS.find(l=>l.id===3);
+
+  const lessonHonorGod={
+    id:"1-9", type:"aula", title:"Honrando a Deus com nossa vida e recursos",
+    objectives:[
+      "Entender que tudo o que temos vem do Senhor.",
+      "Compreender dízimos e ofertas como expressão de gratidão, honra e fidelidade.",
+      "Aprender o princípio da mordomia cristã.",
+      "Reconhecer que contribuir é participar da obra de Deus com alegria e responsabilidade."
+    ],
+    keyVerse:"Honra ao Senhor com os teus bens e com as primícias de toda a tua renda. — Pv 3:9",
+    sections:[
+      {h:"Tudo o que temos vem do Senhor", body:`A vida cristã começa com uma verdade simples e profunda: nada do que temos é realmente nosso em primeiro lugar.\n\nA vida vem de Deus. A salvação vem de Deus. A força para trabalhar vem de Deus. Os dons, as oportunidades e os recursos vêm de Deus.\n\nDavi entendeu isso quando orou: "Tudo vem de ti, e nós apenas te demos o que vem das tuas mãos" (1 Crônicas 29:14).\n\nO cristão não olha para sua vida, seu tempo, seus bens e seus recursos como se fossem apenas conquistas pessoais. Ele entende que é administrador daquilo que Deus confiou em suas mãos.`, verses:["Tudo vem de ti, e nós apenas te demos o que vem das tuas mãos. — 1 Cr 29:14"]},
+      {h:"Dízimos e ofertas são expressão de honra e gratidão", body:`Dízimos e ofertas não são uma forma de comprar bênçãos. Nós não contribuímos para tentar convencer Deus a nos amar mais, nem ofertamos para negociar milagres.\n\nA contribuição cristã nasce da gratidão. Quando entregamos nossos dízimos e ofertas, estamos dizendo: "Senhor, reconheço que tudo vem de Ti; eu Te honro em primeiro lugar; confio em Ti mais do que nos meus recursos; quero participar da Tua obra".\n\nDeus não deseja uma entrega forçada, pesada ou feita por medo. Ele ama uma entrega feita com alegria, fé, gratidão e honra.`, verses:["Cada um dê conforme determinou em seu coração, não com pesar ou por obrigação, pois Deus ama quem dá com alegria. — 2 Co 9:7"]},
+      {h:"Mordomia cristã é administrar bem o que Deus confiou", body:`Mordomia cristã significa administrar com fidelidade aquilo que pertence a Deus e foi colocado sob nossa responsabilidade.\n\nSomos mordomos de Deus em várias áreas: tempo, família, corpo, dons, trabalho, recursos, vida espiritual e serviço na igreja.\n\nSer fiel a Deus não envolve apenas cantar, orar ou frequentar cultos. Também envolve viver com responsabilidade diante daquilo que Ele confiou a nós.`, verses:["O que se requer dos despenseiros é que cada um deles seja encontrado fiel. — 1 Co 4:2"]},
+      {h:"Contribuir é participar da obra de Deus", body:`A igreja local é uma família espiritual, mas também é uma obra que precisa ser sustentada com responsabilidade.\n\nAtravés da fidelidade do povo de Deus, a igreja pode anunciar o Evangelho, cuidar de pessoas, realizar discipulado, manter o local de culto, ajudar necessitados e investir em crianças, jovens, famílias e novos convertidos.\n\nContribuir não é apenas entregar dinheiro. É participar daquilo que Deus está fazendo.`, verses:["Onde estiver o seu tesouro, aí também estará o seu coração. — Mt 6:21"]}
+    ],
+    heartNote:"Não entregamos ao Senhor para comprar bênçãos; entregamos porque reconhecemos que Ele já nos abençoou primeiro.",
+    prayer:"Senhor Deus, obrigado por tudo o que o Senhor tem me dado. Obrigado pela minha vida, pela salvação, pela família, pelo sustento e por cada oportunidade.\n\nAjuda-me a reconhecer que tudo vem de Ti. Ensina-me a ser fiel, grato e responsável com aquilo que o Senhor colocou em minhas mãos.\n\nQue eu nunca contribua por medo, peso ou interesse, mas por amor, honra e gratidão. Usa minha vida, meu tempo, meus dons e meus recursos para a glória do Teu nome e para o crescimento da Tua obra. Em nome de Jesus, amém.",
+    challenge:["Ore agradecendo a Deus por tudo o que Ele já confiou a você.","Avalie se você tem administrado bem seu tempo, seus dons e seus recursos.","Peça ao Senhor um coração fiel, generoso e grato.","Converse com seu pastor ou líder se tiver dúvidas sobre dízimos, ofertas e mordomia cristã."],
+    reflections:["Você reconhece que tudo o que tem veio das mãos de Deus?","Você enxerga dízimos e ofertas como peso ou como expressão de gratidão?","Em quais áreas você precisa ser um melhor mordomo daquilo que Deus confiou a você?","Seu coração está mais preso às coisas deste mundo ou ao Reino de Deus?"],
+    extraReading:["Provérbios 3:9-10","1 Crônicas 29:14","2 Coríntios 9:6-8","1 Coríntios 4:2","Mateus 6:19-21"],
+    memVerse:"Cada um dê conforme determinou em seu coração, não com pesar ou por obrigação, pois Deus ama quem dá com alegria. — 2 Co 9:7"
+  };
+
+  const lessonHonorBody={
+    id:"2-7", type:"aula", title:"A Cultura da Honra no Corpo de Cristo",
+    objectives:[
+      "Entender o que é honra segundo a Palavra de Deus.",
+      "Aprender a honrar irmãos, líderes e pessoas no Corpo de Cristo.",
+      "Reconhecer que honra não é bajulação, mas respeito e amor prático.",
+      "Desenvolver atitudes que protegem a unidade da igreja."
+    ],
+    keyVerse:"Amai-vos cordialmente uns aos outros com amor fraternal, preferindo-vos em honra uns aos outros. — Rm 12:10",
+    sections:[
+      {h:"Honra é reconhecer o valor que Deus colocou no outro", body:`Honrar é reconhecer valor. No mundo, muitas pessoas honram apenas quem tem cargo, dinheiro, influência ou posição. Mas no Reino de Deus, aprendemos a olhar as pessoas de outra maneira.\n\nCada irmão tem valor porque foi criado por Deus, amado por Cristo e chamado para fazer parte do Corpo.\n\nHonra não é idolatria, bajulação ou fingimento. Honra é tratar o outro com respeito, amor e dignidade.`, verses:["Honrai a todos. Amai os irmãos. Temei a Deus. Honrai o rei. — 1 Pe 2:17"]},
+      {h:"Honramos com palavras, atitudes e serviço", body:`A honra aparece no modo como tratamos as pessoas. Honramos com palavras quando falamos com respeito. Palavras podem levantar ou derrubar, curar ou ferir, unir ou dividir.\n\nTambém honramos com atitudes: cumprimentar com amor, ouvir antes de responder, não expor fraquezas alheias, não competir com irmãos, valorizar o serviço dos outros, ser grato, respeitar limites e servir sem querer aparecer.\n\nA honra torna o amor visível.`, verses:["Nenhuma palavra torpe saia da boca de vocês, mas apenas a que for útil para edificar os outros. — Ef 4:29","Com isso todos saberão que vocês são meus discípulos, se vocês se amarem uns aos outros. — Jo 13:35"]},
+      {h:"Honra protege a unidade da igreja", body:`Onde não há honra, surgem fofoca, comparação, competição, orgulho e divisão. Mas onde há honra, a unidade é preservada.\n\nA honra nos ensina a celebrar o crescimento do outro. O irmão foi usado por Deus? Glorifique a Deus. Alguém recebeu uma oportunidade? Alegre-se. Outro ministério está frutificando? Ore e apoie.\n\nNão somos rivais. Somos família.`, verses:["Nada façam por ambição egoísta ou por vaidade, mas humildemente considerem os outros superiores a si mesmos. — Fp 2:3"]},
+      {h:"Honrar também é saber corrigir e ser corrigido", body:`Honrar não é ignorar erros. A correção feita com amor também é uma forma de cuidado. Jesus não mandou espalhar, comentar ou expor; Ele ensinou a procurar a pessoa com verdade e amor.\n\nTambém precisamos aprender a receber correção. Quem tem um coração honroso não se ofende com todo conselho. Ele examina, ora, aprende e cresce.`, verses:["Se o seu irmão pecar contra você, vá e, a sós com ele, mostre-lhe o erro. — Mt 18:15"]},
+      {h:"Honrando a liderança espiritual", body:`A Palavra nos ensina a honrar aqueles que Deus colocou para cuidar da igreja. Honrar a liderança não significa idolatrar homens nem aceitar abuso, manipulação ou controle. A liderança bíblica deve servir com temor, humildade e exemplo.\n\nHonramos a liderança quando oramos, cooperamos com a visão da igreja, recebemos orientação com humildade, evitamos fofoca e divisão, conversamos diretamente quando temos dúvidas e servimos com alegria e responsabilidade.`, verses:["Tenham consideração para com os que se esforçam no trabalho entre vocês, que os lideram no Senhor e os aconselham. — 1 Ts 5:12-13"]}
+    ],
+    heartNote:"Honra é reconhecer o valor que Deus colocou nas pessoas e tratá-las com amor, respeito e dignidade.",
+    prayer:"Senhor Deus, ensina-me a viver uma vida de honra. Ajuda-me a enxergar meus irmãos como pessoas preciosas diante de Ti.\n\nGuarda minha boca de palavras que ferem, dividem ou enfraquecem o Corpo. Dá-me humildade para servir, maturidade para receber correção e amor para tratar todos com respeito.\n\nAjuda-me a honrar minha igreja, meus irmãos e minha liderança espiritual de maneira bíblica, equilibrada e sincera. Em nome de Jesus, amém.",
+    challenge:["Envie uma mensagem de encorajamento para alguém da igreja.","Ore por sua liderança espiritual.","Evite comentários que não edificam.","Procure elogiar sinceramente o serviço de alguém.","Se houver algum conflito, busque resolver com amor e maturidade."],
+    reflections:["Você costuma honrar as pessoas com suas palavras?","Você se alegra quando Deus usa outra pessoa?","Suas atitudes ajudam a proteger ou enfraquecer a unidade da igreja?","Como você reage quando é corrigido?","Você tem orado por sua liderança espiritual?"],
+    extraReading:["Romanos 12:10","1 Pedro 2:17","Efésios 4:29","Filipenses 2:3-4","João 13:34-35","1 Tessalonicenses 5:12-13"],
+    memVerse:"Amai-vos cordialmente uns aos outros com amor fraternal, preferindo-vos em honra uns aos outros. — Rm 12:10"
+  };
+
+  if(lv1 && !getAllLessons().some(x=>x.lesson.id==='1-9')){
+    const m=lv1.modules[2];
+    const idx=m.lessons.findIndex(l=>l.id==='1-q3');
+    m.lessons.splice(idx>=0?idx:m.lessons.length,0,lessonHonorGod);
+    const q=m.lessons.find(l=>l.id==='1-q3');
+    if(q && !q.questions.some(item=>item.q.includes('dízimos'))){
+      q.questions.push({q:"Segundo a aula sobre dízimos e ofertas, por que contribuímos?", opts:["Para comprar bênçãos de Deus","Por medo de perder a salvação","Como expressão de gratidão, honra e fidelidade","Para receber reconhecimento público"], ans:2});
+    }
+  }
+
+  if(lv2 && !getAllLessons().some(x=>x.lesson.id==='2-7')){
+    const m=lv2.modules[1];
+    const idx=m.lessons.findIndex(l=>l.id==='2-q2');
+    m.lessons.splice(idx>=0?idx:m.lessons.length,0,lessonHonorBody);
+    const q=m.lessons.find(l=>l.id==='2-q2');
+    if(q && !q.questions.some(item=>item.q.includes('cultura da honra'))){
+      q.questions.push({q:"Segundo a aula sobre a cultura da honra, honrar significa:", opts:["Bajular pessoas importantes","Reconhecer o valor que Deus colocou nas pessoas e tratá-las com dignidade","Concordar com tudo, mesmo quando algo está errado","Buscar reconhecimento através do serviço"], ans:1});
+    }
+  }
+
+  if(lv3){
+    const lesson=lv3.modules.flatMap(m=>m.lessons).find(l=>l.id==='3-7');
+    if(lesson && !lesson.sections.some(s=>s.h.includes('equilíbrio bíblico'))){
+      lesson.sections.push(
+        {h:"Honra à liderança com equilíbrio bíblico", body:`Honrar a liderança espiritual é reconhecer que existe uma responsabilidade dada por Deus àqueles que cuidam do rebanho. Pastores, líderes e obreiros não são donos da igreja. A igreja pertence a Cristo.\n\nHonra não deve ser baseada em medo, bajulação ou interesse, mas em amor, maturidade e entendimento espiritual.`, verses:["Tenham-nos na mais alta estima, com amor, por causa do trabalho deles. Vivam em paz uns com os outros. — 1 Ts 5:13"]},
+        {h:"Honra não é idolatria; submissão não é manipulação", body:`Honrar liderança não significa colocar homens no lugar de Deus. Jesus é o Cabeça da Igreja, o Senhor da obra e o Supremo Pastor.\n\nSubmissão bíblica também não significa aceitar abuso, opressão, humilhação ou manipulação espiritual. A autoridade na igreja deve refletir o caráter de Cristo. O líder espiritual não usa autoridade para esmagar, mas para cuidar.`, verses:["Ele é a cabeça do corpo, que é a igreja. — Cl 1:18","Quem quiser tornar-se grande entre vocês deverá ser servo. — Mt 20:26"]},
+        {h:"Responsabilidade dos dois lados", body:`A igreja deve caminhar com respeito, honra e submissão. A liderança deve cuidar sabendo que prestará contas a Deus.\n\nOu seja, a honra bíblica envolve responsabilidade dos dois lados: o povo honra a liderança, e a liderança serve o povo com temor de Deus.`, verses:["Obedeçam aos seus líderes e submetam-se à autoridade deles. Eles cuidam de vocês como quem deve prestar contas. — Hb 13:17","Não como dominadores dos que lhes foram confiados, mas como exemplos para o rebanho. — 1 Pe 5:3"]}
+      );
+      lesson.heartNote="Honrar liderança não é idolatrar homens; submeter-se não é aceitar manipulação. Honra bíblica é caminhar com respeito, humildade, unidade e maturidade, reconhecendo que Cristo é o Senhor da igreja.";
+      lesson.prayer="Senhor Deus, ajuda-me a ter um coração ensinável. Livra-me da rebeldia, da murmuração e da divisão.\n\nDá-me discernimento para viver uma submissão saudável, bíblica e madura. Abençoa meus pastores e líderes com sabedoria, humildade, temor e amor para cuidar do Teu povo. Em nome de Jesus, amém.";
+      lesson.challenge=["Ore por seu pastor e pelos líderes da igreja.","Evite qualquer comentário que gere divisão.","Procure servir com mais responsabilidade.","Receba correção com humildade.","Se tiver alguma dúvida ou dificuldade, converse com maturidade e respeito."];
+      lesson.extraReading=["1 Tessalonicenses 5:12-13","Hebreus 13:17","Mateus 20:25-28","1 Pedro 5:2-3","Colossenses 1:18","Mateus 18:15"];
+    }
+  }
+
+  // Add default pastoral blocks to lessons that do not yet have them.
+  getAllLessons().forEach(({lesson})=>{
+    if(lesson.type!=='aula') return;
+    if(!lesson.objectives) lesson.objectives=["Compreender o ensino bíblico desta aula.","Aplicar esta verdade na vida diária.","Crescer em maturidade cristã."];
+    if(!lesson.keyVerse && lesson.memVerse) lesson.keyVerse=lesson.memVerse;
+    if(!lesson.heartNote) lesson.heartNote="A Palavra de Deus não apenas informa; ela transforma o coração de quem a recebe com fé e obediência.";
+    if(!lesson.prayer) lesson.prayer="Senhor Deus, fala comigo por meio desta aula. Abre meu entendimento, fortalece minha fé e ajuda-me a viver de acordo com a Tua Palavra. Em nome de Jesus, amém.";
+    if(!lesson.challenge) lesson.challenge=["Separe um momento de oração sobre o que aprendeu.","Pratique uma atitude concreta relacionada a esta aula.","Compartilhe com seu líder ou discipulador uma decisão que Deus colocou em seu coração."];
+    if(!lesson.extraReading) lesson.extraReading=(lesson.sections||[]).flatMap(s=>s.verses||[]).slice(0,5);
+  });
+})();
+
+renderHome();
+</script>
+</body>
+</html>
